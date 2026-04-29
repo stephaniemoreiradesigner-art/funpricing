@@ -1,0 +1,235 @@
+'use client'
+
+import { useState } from 'react'
+import { Pencil, Trash2, Check, X, Plus } from 'lucide-react'
+import { createLabor, updateLabor, deleteLabor } from '@/app/actions/labor'
+import { formatCurrency } from '@/lib/calculations'
+import type { Labor } from '@/types'
+
+const LEVELS: Record<Labor['level'], string> = {
+  junior: 'Júnior',
+  pleno: 'Pleno',
+  senior: 'Sênior',
+}
+
+const LEVEL_COLORS: Record<Labor['level'], string> = {
+  junior: 'bg-gray-100 text-gray-600',
+  pleno: 'bg-blue-50 text-blue-700',
+  senior: 'bg-purple-50 text-purple-700',
+}
+
+interface Props {
+  items: Labor[]
+}
+
+export function LaborClient({ items }: Props) {
+  const [adding, setAdding] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  async function handleCreate(formData: FormData) {
+    await createLabor(formData)
+    setAdding(false)
+  }
+
+  async function handleUpdate(formData: FormData) {
+    await updateLabor(formData)
+    setEditingId(null)
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('Excluir este profissional? Produtos que usam esta mão de obra serão afetados.')) return
+    setDeletingId(id)
+    await deleteLabor(id)
+    setDeletingId(null)
+  }
+
+  function startAdding() {
+    setAdding(true)
+    setEditingId(null)
+  }
+
+  function startEditing(id: string) {
+    setEditingId(id)
+    setAdding(false)
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div>
+          <h3 className="font-semibold text-gray-900">Profissionais</h3>
+          <p className="text-xs text-gray-400 mt-0.5">{items.length} cadastrado{items.length !== 1 ? 's' : ''}</p>
+        </div>
+        <button
+          onClick={startAdding}
+          className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#256690] transition-colors"
+        >
+          <Plus size={16} />
+          Adicionar
+        </button>
+      </div>
+
+      <table className="w-full">
+        <thead>
+          <tr className="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider">
+            <th className="text-left px-6 py-3 font-medium">Cargo</th>
+            <th className="text-left px-6 py-3 font-medium">Nível</th>
+            <th className="text-left px-6 py-3 font-medium">Salário mensal</th>
+            <th className="text-left px-6 py-3 font-medium">Valor/hora</th>
+            <th className="px-6 py-3" />
+          </tr>
+        </thead>
+        <tbody>
+          {adding && (
+            <LaborRow
+              formId="labor-add"
+              onSave={handleCreate}
+              onCancel={() => setAdding(false)}
+            />
+          )}
+
+          {items.map((item) =>
+            editingId === item.id ? (
+              <LaborRow
+                key={item.id}
+                formId={`labor-edit-${item.id}`}
+                item={item}
+                onSave={handleUpdate}
+                onCancel={() => setEditingId(null)}
+              />
+            ) : (
+              <tr key={item.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-3 text-sm font-medium text-gray-900">{item.title}</td>
+                <td className="px-6 py-3">
+                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${LEVEL_COLORS[item.level]}`}>
+                    {LEVELS[item.level]}
+                  </span>
+                </td>
+                <td className="px-6 py-3 text-sm text-gray-700">{formatCurrency(item.monthly_salary)}</td>
+                <td className="px-6 py-3 text-sm text-gray-500">{formatCurrency(item.hourly_rate)}/h</td>
+                <td className="px-6 py-3">
+                  <div className="flex items-center justify-end gap-3">
+                    <button
+                      onClick={() => startEditing(item.id)}
+                      className="text-gray-400 hover:text-[#307ca8] transition-colors"
+                      title="Editar"
+                    >
+                      <Pencil size={15} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      disabled={deletingId === item.id}
+                      className="text-gray-400 hover:text-red-500 transition-colors disabled:opacity-40"
+                      title="Excluir"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            )
+          )}
+
+          {items.length === 0 && !adding && (
+            <tr>
+              <td colSpan={5} className="px-6 py-10 text-center text-sm text-gray-400">
+                Nenhum profissional cadastrado ainda. Clique em &quot;Adicionar&quot; para começar.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function LaborRow({
+  formId,
+  item,
+  onSave,
+  onCancel,
+}: {
+  formId: string
+  item?: Labor
+  onSave: (formData: FormData) => Promise<void>
+  onCancel: () => void
+}) {
+  const [salary, setSalary] = useState(item?.monthly_salary ?? 0)
+  const [saving, setSaving] = useState(false)
+  const hourlyRate = salary / 220
+
+  async function handleSubmit(formData: FormData) {
+    setSaving(true)
+    await onSave(formData)
+    setSaving(false)
+  }
+
+  return (
+    <tr className="border-b border-blue-100 bg-blue-50/40">
+      <td className="px-6 py-2.5">
+        <input
+          form={formId}
+          type="text"
+          name="title"
+          defaultValue={item?.title ?? ''}
+          placeholder="Ex: Desenvolvedor Front-end"
+          required
+          className="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+        />
+      </td>
+      <td className="px-6 py-2.5">
+        <select
+          form={formId}
+          name="level"
+          defaultValue={item?.level ?? 'pleno'}
+          className="border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+        >
+          <option value="junior">Júnior</option>
+          <option value="pleno">Pleno</option>
+          <option value="senior">Sênior</option>
+        </select>
+      </td>
+      <td className="px-6 py-2.5">
+        <div className="relative w-40">
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm">R$</span>
+          <input
+            form={formId}
+            type="number"
+            name="monthly_salary"
+            value={salary}
+            min={0}
+            step={100}
+            onChange={(e) => setSalary(parseFloat(e.target.value) || 0)}
+            required
+            className="w-full border border-gray-300 rounded-lg pl-8 pr-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+          />
+        </div>
+      </td>
+      <td className="px-6 py-2.5 text-sm text-gray-500">
+        {formatCurrency(hourlyRate)}/h
+      </td>
+      <td className="px-6 py-2.5">
+        <form id={formId} action={handleSubmit} className="flex items-center justify-end gap-2">
+          {item && <input type="hidden" name="id" value={item.id} />}
+          <button
+            type="submit"
+            disabled={saving}
+            className="text-green-600 hover:text-green-700 disabled:opacity-40 transition-colors"
+            title="Salvar"
+          >
+            <Check size={18} />
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-gray-400 hover:text-red-500 transition-colors"
+            title="Cancelar"
+          >
+            <X size={18} />
+          </button>
+        </form>
+      </td>
+    </tr>
+  )
+}
