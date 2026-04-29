@@ -28,7 +28,9 @@ export default async function ProposalPage({ params }: Props) {
 
   if (!proposal) notFound()
 
-  const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/p/${proposal.public_token}`
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? ''
+  const publicUrl = `${appUrl}/p/${proposal.public_token}`
+  const pdfUrl = `/api/pdf/${id}`
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -47,6 +49,7 @@ export default async function ProposalPage({ params }: Props) {
       <ProposalDetail
         proposal={proposal as Proposal}
         publicUrl={publicUrl}
+        pdfUrl={pdfUrl}
       />
     </div>
   )

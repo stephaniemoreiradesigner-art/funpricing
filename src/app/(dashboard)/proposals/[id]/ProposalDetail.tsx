@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check, Send } from 'lucide-react'
+import { Copy, Check, Send, Download } from 'lucide-react'
 import { markProposalSent } from '@/app/actions/proposals'
 import { formatCurrency } from '@/lib/calculations'
 import type { Proposal } from '@/types'
@@ -9,6 +9,7 @@ import type { Proposal } from '@/types'
 interface Props {
   proposal: Proposal
   publicUrl: string
+  pdfUrl: string
 }
 
 const STATUS_LABEL: Record<string, string> = {
@@ -22,7 +23,7 @@ const STATUS_COLOR: Record<string, string> = {
   viewed: 'bg-green-50 text-green-700',
 }
 
-export function ProposalDetail({ proposal, publicUrl }: Props) {
+export function ProposalDetail({ proposal, publicUrl, pdfUrl }: Props) {
   const [copied, setCopied] = useState(false)
   const [marking, setMarking] = useState(false)
 
@@ -62,16 +63,27 @@ export function ProposalDetail({ proposal, publicUrl }: Props) {
             )}
           </div>
 
-          {proposal.status === 'draft' && (
-            <button
-              onClick={handleMarkSent}
-              disabled={marking}
-              className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50"
+          <div className="flex items-center gap-2">
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 border border-gray-300 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              <Send size={15} />
-              {marking ? 'Marcando...' : 'Marcar como enviada'}
-            </button>
-          )}
+              <Download size={15} />
+              Baixar PDF
+            </a>
+            {proposal.status === 'draft' && (
+              <button
+                onClick={handleMarkSent}
+                disabled={marking}
+                className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50"
+              >
+                <Send size={15} />
+                {marking ? 'Marcando...' : 'Marcar como enviada'}
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
