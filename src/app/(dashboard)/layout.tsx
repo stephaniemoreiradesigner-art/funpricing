@@ -27,7 +27,7 @@ export default async function DashboardLayout({
     <div className="min-h-screen bg-gray-50">
       <Sidebar role={role} />
       <div className="ml-60 flex flex-col min-h-screen">
-        <Header title="FunPricing" userName={name} />
+        <Header title="FanPricing" userName={name} />
         <main className="flex-1 p-6">
           {children}
         </main>

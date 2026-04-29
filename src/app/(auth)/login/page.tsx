@@ -36,7 +36,7 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#307ca8] mb-4">
             <span className="text-white font-bold text-xl">F</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">FunPricing</h1>
+          <h1 className="text-2xl font-bold text-gray-900">FanPricing</h1>
           <p className="text-sm text-gray-500 mt-1">Faça login para continuar</p>
         </div>
 

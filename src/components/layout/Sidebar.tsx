@@ -69,7 +69,7 @@ export function Sidebar({ role }: SidebarProps) {
         <div className="w-8 h-8 rounded-lg bg-[#307ca8] flex items-center justify-center">
           <span className="text-white font-bold text-sm">F</span>
         </div>
-        <span className="font-bold text-gray-900">FunPricing</span>
+        <span className="font-bold text-gray-900">FanPricing</span>
       </div>
 
       {/* Navegação principal */}
