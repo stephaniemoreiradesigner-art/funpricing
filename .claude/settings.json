@@ -4,7 +4,8 @@
       "Bash(tasklist)",
       "Bash(jobs -l)",
       "Read(//g/Meu Drive/End/Projetos E2E - F2F/Fun`Pricing/fanpricing/**)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(rm .git/refs/desktop.ini .git/refs/heads/desktop.ini .git/refs/tags/desktop.ini .git/refs/remotes/desktop.ini .git/refs/remotes/origin/desktop.ini)"
     ]
   }
 }
