@@ -109,7 +109,7 @@ export default async function SettingsPage() {
           </div>
         </div>
 
-        <ProfileForm profile={profile as Profile} />
+        <ProfileForm profile={(profile ?? { id: user!.id, name: '', role: 'user', avatar_url: null, phone: null, cnpj: null, address: null, created_at: '' }) as Profile} />
       </div>
     </div>
   )
