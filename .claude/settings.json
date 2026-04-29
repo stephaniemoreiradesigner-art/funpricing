@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(tasklist)",
-      "Bash(jobs -l)"
+      "Bash(jobs -l)",
+      "Read(//g/Meu Drive/End/Projetos E2E - F2F/Fun`Pricing/fanpricing/**)",
+      "Bash(npm install *)"
     ]
   }
 }
