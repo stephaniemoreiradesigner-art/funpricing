@@ -187,10 +187,7 @@ export function UsersClient({ users, currentUserId }: Props) {
 
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 sticky top-0 bg-white rounded-t-2xl">
-              <div>
-                <p className="text-sm font-semibold text-gray-900">{editingUser.email}</p>
-                <p className="text-xs text-gray-400">Editar perfil</p>
-              </div>
+              <p className="text-base font-semibold text-gray-900">Cadastro de Usuário</p>
               <button onClick={closeEdit} className="text-gray-400 hover:text-gray-600 transition-colors">
                 <X size={18} />
               </button>
@@ -221,6 +218,17 @@ export function UsersClient({ users, currentUserId }: Props) {
               <div>
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Dados pessoais</p>
                 <div className="space-y-3">
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-1">E-mail</label>
+                    <input
+                      type="email"
+                      value={editingUser.email}
+                      readOnly
+                      className="w-full bg-gray-50 text-gray-500 border border-gray-200 rounded-lg px-3 py-2.5 text-sm cursor-not-allowed select-none"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">O e-mail é o identificador de login e não pode ser alterado aqui.</p>
+                  </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-800 mb-1">Nome completo *</label>
@@ -293,15 +301,11 @@ export function UsersClient({ users, currentUserId }: Props) {
                 <select
                   value={editForm.role}
                   onChange={(e) => setEditForm((f) => ({ ...f, role: e.target.value as UserRole }))}
-                  disabled={editingUser.id === currentUserId}
-                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
                 >
                   <option value="user">Usuário</option>
                   <option value="admin">Admin</option>
                 </select>
-                {editingUser.id === currentUserId && (
-                  <p className="text-xs text-gray-400 mt-1">Não é possível alterar o próprio perfil.</p>
-                )}
               </div>
             </div>
 

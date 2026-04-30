@@ -73,6 +73,10 @@ export function Sidebar({ role, userName, avatarUrl }: SidebarProps) {
     .join('')
     .toUpperCase()
 
+  const firstName = userName.includes('@')
+    ? userName.split('@')[0]
+    : userName.split(' ')[0]
+
   return (
     <aside className="fixed left-0 top-0 h-full w-60 bg-white border-r border-gray-200 flex flex-col z-30">
       {/* Logo */}
@@ -118,7 +122,7 @@ export function Sidebar({ role, userName, avatarUrl }: SidebarProps) {
 
           {/* Nome + role + versão */}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-white truncate">{userName}</p>
+            <p className="text-sm font-semibold text-white truncate">{firstName}</p>
             <p className="text-xs text-blue-200">{role === 'admin' ? 'Admin' : 'Usuário'}</p>
             <p className="text-xs text-blue-300/50">v1</p>
           </div>
