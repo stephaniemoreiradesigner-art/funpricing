@@ -9,31 +9,43 @@ export default async function UsersPage() {
 
   const { data: { user: currentUser } } = await supabase.auth.getUser()
 
-  const [
-    { data: { users: authUsers } },
-    { data: profiles },
-  ] = await Promise.all([
-    admin.auth.admin.listUsers(),
-    supabase.from('profiles').select('id, full_name, role, phone, cnpj, address, avatar_url'),
-  ])
+  // Tenta buscar colunas estendidas; se não existirem, cai no fallback básico
+  let profiles: Array<Record<string, unknown>> = []
+  const { data: extended, error: extError } = await supabase
+    .from('profiles')
+    .select('id, full_name, role, phone, cnpj, address, avatar_url')
 
-  const profileMap = new Map(
-    (profiles ?? []).map((p) => [p.id, p])
-  )
+  if (extError) {
+    const { data: basic } = await supabase
+      .from('profiles')
+      .select('id, full_name, role')
+    profiles = basic ?? []
+  } else {
+    profiles = extended ?? []
+  }
+
+  // Busca usuários auth com tratamento de erro
+  let authUsers: Awaited<ReturnType<typeof admin.auth.admin.listUsers>>['data']['users'] = []
+  try {
+    const { data } = await admin.auth.admin.listUsers()
+    authUsers = data.users
+  } catch {
+    // SUPABASE_SERVICE_ROLE_KEY pode não estar configurada em produção
+  }
+
+  const profileMap = new Map(profiles.map((p) => [p.id as string, p]))
 
   const users = authUsers.map((u) => {
-    const profile = profileMap.get(u.id) as {
-      full_name?: string; role?: string; phone?: string; cnpj?: string; address?: string; avatar_url?: string
-    } | undefined
+    const p = profileMap.get(u.id) ?? {}
     return {
       id: u.id,
       email: u.email ?? '',
-      name: profile?.full_name ?? '',
-      role: (profile?.role ?? 'user') as UserRole,
-      phone: profile?.phone ?? '',
-      cnpj: profile?.cnpj ?? '',
-      address: profile?.address ?? '',
-      avatar_url: profile?.avatar_url ?? null,
+      name: (p.full_name as string) ?? '',
+      role: ((p.role as string) ?? 'user') as UserRole,
+      phone: (p.phone as string) ?? '',
+      cnpj: (p.cnpj as string) ?? '',
+      address: (p.address as string) ?? '',
+      avatar_url: (p.avatar_url as string | null) ?? null,
       created_at: u.created_at,
     }
   })
