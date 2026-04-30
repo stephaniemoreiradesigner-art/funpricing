@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Settings, UserCog, Package, Hammer, Percent, Palette } from 'lucide-react'
+import { Settings, UserCog, Package, Hammer, Percent, Palette, FolderUp } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 
 const ADMIN_SECTIONS = [
@@ -37,6 +37,13 @@ const ADMIN_SECTIONS = [
     description: 'Logo, cores e identidade visual',
     icon: Palette,
     color: 'bg-pink-50 text-pink-600',
+  },
+  {
+    href: '/admin/files',
+    label: 'Upload Arquivos',
+    description: 'Modelos de contrato e proposta',
+    icon: FolderUp,
+    color: 'bg-orange-50 text-orange-600',
   },
 ]
 
