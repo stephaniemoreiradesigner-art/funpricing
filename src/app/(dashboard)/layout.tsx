@@ -16,16 +16,17 @@ export default async function DashboardLayout({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, role')
+    .select('full_name, role, avatar_url')
     .eq('id', user.id)
     .single()
 
   const role = (profile?.role ?? 'user') as UserRole
   const name = profile?.full_name ?? user.email ?? 'Usuário'
+  const avatarUrl = (profile as { avatar_url?: string | null } | null)?.avatar_url ?? null
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar role={role} />
+      <Sidebar role={role} userName={name} avatarUrl={avatarUrl} />
       <div className="ml-60 flex flex-col min-h-screen">
         <Header title="FanPricing" userName={name} />
         <main className="flex-1 p-6">

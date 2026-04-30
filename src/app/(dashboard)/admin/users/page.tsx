@@ -14,7 +14,7 @@ export default async function UsersPage() {
     { data: profiles },
   ] = await Promise.all([
     admin.auth.admin.listUsers(),
-    supabase.from('profiles').select('id, full_name, role, phone, cnpj, address'),
+    supabase.from('profiles').select('id, full_name, role, phone, cnpj, address, avatar_url'),
   ])
 
   const profileMap = new Map(
@@ -23,7 +23,7 @@ export default async function UsersPage() {
 
   const users = authUsers.map((u) => {
     const profile = profileMap.get(u.id) as {
-      full_name?: string; role?: string; phone?: string; cnpj?: string; address?: string
+      full_name?: string; role?: string; phone?: string; cnpj?: string; address?: string; avatar_url?: string
     } | undefined
     return {
       id: u.id,
@@ -33,6 +33,7 @@ export default async function UsersPage() {
       phone: profile?.phone ?? '',
       cnpj: profile?.cnpj ?? '',
       address: profile?.address ?? '',
+      avatar_url: profile?.avatar_url ?? null,
       created_at: u.created_at,
     }
   })

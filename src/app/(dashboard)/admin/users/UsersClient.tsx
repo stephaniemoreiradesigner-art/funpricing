@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { Trash2, Plus, Pencil, X, User } from 'lucide-react'
+import { useRef, useState } from 'react'
+import Image from 'next/image'
+import { Trash2, Plus, Pencil, X, Camera, Loader2 } from 'lucide-react'
 import { updateUser, deleteUser, inviteUser } from '@/app/actions/users'
+import { createClient } from '@/lib/supabase/client'
 import type { UserRole } from '@/types'
 
 interface UserRow {
@@ -13,6 +15,7 @@ interface UserRow {
   phone: string
   cnpj: string
   address: string
+  avatar_url: string | null
   created_at: string
 }
 
@@ -26,36 +29,134 @@ interface EditForm {
   role: UserRole
   phone: string
   cnpj: string
+  cep: string
   address: string
+  avatar_url: string | null
 }
+
+// ── Máscaras ─────────────────────────────────────────────────────────────────
+
+function maskPhone(raw: string): string {
+  const d = raw.replace(/\D/g, '').slice(0, 11)
+  if (d.length <= 2) return d.length ? `(${d}` : ''
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`
+}
+
+function maskCpfCnpj(raw: string): string {
+  const d = raw.replace(/\D/g, '').slice(0, 14)
+  if (d.length <= 3) return d
+  if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`
+  if (d.length <= 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`
+  if (d.length <= 11) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`
+  if (d.length <= 12) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8)}`
+  if (d.length <= 13) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}`
+  return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}-${d.slice(12)}`
+}
+
+function maskCep(raw: string): string {
+  const d = raw.replace(/\D/g, '').slice(0, 8)
+  return d.length > 5 ? `${d.slice(0, 5)}-${d.slice(5)}` : d
+}
+
+// ── CEP ──────────────────────────────────────────────────────────────────────
+
+async function fetchViaCep(cep: string): Promise<{ logradouro: string; bairro: string; localidade: string; uf: string } | null> {
+  try {
+    const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
+    const data = await res.json()
+    return data.erro ? null : data
+  } catch {
+    return null
+  }
+}
+
+// ── Componente ────────────────────────────────────────────────────────────────
 
 export function UsersClient({ users, currentUserId }: Props) {
   const [showInvite, setShowInvite] = useState(false)
   const [inviting, setInviting] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [editingUser, setEditingUser] = useState<UserRow | null>(null)
-  const [editForm, setEditForm] = useState<EditForm>({ full_name: '', role: 'user', phone: '', cnpj: '', address: '' })
+  const [editForm, setEditForm] = useState<EditForm>({
+    full_name: '', role: 'user', phone: '', cnpj: '', cep: '', address: '', avatar_url: null,
+  })
   const [saving, setSaving] = useState(false)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [cepLoading, setCepLoading] = useState(false)
+
+  const avatarInputRef = useRef<HTMLInputElement>(null)
 
   function openEdit(user: UserRow) {
-    setEditForm({ full_name: user.name, role: user.role, phone: user.phone, cnpj: user.cnpj, address: user.address })
+    setEditForm({
+      full_name: user.name,
+      role: user.role,
+      phone: user.phone,
+      cnpj: user.cnpj,
+      cep: '',
+      address: user.address,
+      avatar_url: user.avatar_url,
+    })
+    setAvatarFile(null)
+    setPreviewUrl(null)
+    setCepLoading(false)
     setEditingUser(user)
   }
 
   function closeEdit() {
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
     setEditingUser(null)
+  }
+
+  function handleAvatarSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setAvatarFile(file)
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setPreviewUrl(URL.createObjectURL(file))
+  }
+
+  async function handleCepChange(raw: string) {
+    const masked = maskCep(raw)
+    setEditForm((f) => ({ ...f, cep: masked }))
+    const digits = masked.replace(/\D/g, '')
+    if (digits.length !== 8) return
+    setCepLoading(true)
+    const data = await fetchViaCep(digits)
+    if (data) {
+      const parts = [data.logradouro, data.bairro, `${data.localidade} - ${data.uf}`].filter(Boolean)
+      setEditForm((f) => ({ ...f, address: parts.join(', ') }))
+    }
+    setCepLoading(false)
   }
 
   async function handleSave() {
     if (!editingUser) return
     setSaving(true)
+
+    let avatarUrl = editForm.avatar_url
+    if (avatarFile) {
+      const supabase = createClient()
+      const ext = avatarFile.name.split('.').pop() ?? 'jpg'
+      const path = `${editingUser.id}.${ext}`
+      const { error } = await supabase.storage.from('avatars').upload(path, avatarFile, { upsert: true })
+      if (!error) {
+        const { data } = supabase.storage.from('avatars').getPublicUrl(path)
+        avatarUrl = data.publicUrl
+      }
+    }
+
     await updateUser(editingUser.id, {
       full_name: editForm.full_name,
       role: editForm.role,
       phone: editForm.phone || null,
       cnpj: editForm.cnpj || null,
       address: editForm.address || null,
+      avatar_url: avatarUrl,
     })
+
     setSaving(false)
     setEditingUser(null)
   }
@@ -74,33 +175,53 @@ export function UsersClient({ users, currentUserId }: Props) {
     setShowInvite(false)
   }
 
+  const avatarSrc = previewUrl ?? editForm.avatar_url
+  const avatarLetter = (editForm.full_name || editingUser?.email || 'U').charAt(0).toUpperCase()
+
   return (
     <>
-      {/* Modal de edição */}
+      {/* ── Modal de edição ────────────────────────────────────────────────── */}
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-            {/* Header do modal */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#307ca8]/10 flex items-center justify-center">
-                  <User size={18} className="text-[#307ca8]" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">{editingUser.email}</p>
-                  <p className="text-xs text-gray-400">Editar perfil</p>
-                </div>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 sticky top-0 bg-white rounded-t-2xl">
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{editingUser.email}</p>
+                <p className="text-xs text-gray-400">Editar perfil</p>
               </div>
               <button onClick={closeEdit} className="text-gray-400 hover:text-gray-600 transition-colors">
                 <X size={18} />
               </button>
             </div>
 
-            {/* Corpo do modal */}
             <div className="px-6 py-5 space-y-5">
+
+              {/* Avatar upload */}
+              <div className="flex flex-col items-center gap-2">
+                <div
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="relative w-20 h-20 rounded-full overflow-hidden cursor-pointer bg-[#307ca8]/10 flex items-center justify-center group"
+                >
+                  {avatarSrc ? (
+                    <Image src={avatarSrc} alt="avatar" fill className="object-cover" sizes="80px" />
+                  ) : (
+                    <span className="text-[#307ca8] font-bold text-2xl">{avatarLetter}</span>
+                  )}
+                  <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Camera size={20} className="text-white" />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400">Clique para alterar a foto</p>
+                <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarSelect} />
+              </div>
+
+              {/* Dados pessoais */}
               <div>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-4">Dados pessoais</p>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Dados pessoais</p>
                 <div className="space-y-3">
+
                   <div>
                     <label className="block text-sm font-medium text-gray-800 mb-1">Nome completo *</label>
                     <input
@@ -118,8 +239,8 @@ export function UsersClient({ users, currentUserId }: Props) {
                       <input
                         type="text"
                         value={editForm.cnpj}
-                        onChange={(e) => setEditForm((f) => ({ ...f, cnpj: e.target.value }))}
-                        placeholder="00.000.000/0000-00"
+                        onChange={(e) => setEditForm((f) => ({ ...f, cnpj: maskCpfCnpj(e.target.value) }))}
+                        placeholder="000.000.000-00"
                         className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
                       />
                     </div>
@@ -128,26 +249,45 @@ export function UsersClient({ users, currentUserId }: Props) {
                       <input
                         type="tel"
                         value={editForm.phone}
-                        onChange={(e) => setEditForm((f) => ({ ...f, phone: e.target.value }))}
+                        onChange={(e) => setEditForm((f) => ({ ...f, phone: maskPhone(e.target.value) }))}
                         placeholder="(00) 00000-0000"
                         className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
                       />
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-800 mb-1">Endereço</label>
-                    <input
-                      type="text"
-                      value={editForm.address}
-                      onChange={(e) => setEditForm((f) => ({ ...f, address: e.target.value }))}
-                      placeholder="Rua, número, complemento, cidade - UF"
-                      className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
-                    />
+                  {/* CEP + endereço */}
+                  <div className="grid grid-cols-[1fr_2fr] gap-3 items-end">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-1">CEP</label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={editForm.cep}
+                          onChange={(e) => handleCepChange(e.target.value)}
+                          placeholder="00000-000"
+                          className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent pr-8"
+                        />
+                        {cepLoading && (
+                          <Loader2 size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 animate-spin" />
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-1">Endereço</label>
+                      <input
+                        type="text"
+                        value={editForm.address}
+                        onChange={(e) => setEditForm((f) => ({ ...f, address: e.target.value }))}
+                        placeholder="Preenchido automaticamente pelo CEP"
+                        className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
+              {/* Perfil de acesso */}
               <div>
                 <label className="block text-sm font-medium text-gray-800 mb-1">Perfil de acesso</label>
                 <select
@@ -166,12 +306,13 @@ export function UsersClient({ users, currentUserId }: Props) {
             </div>
 
             {/* Footer do modal */}
-            <div className="flex items-center gap-3 px-6 py-4 border-t border-gray-100">
+            <div className="flex items-center gap-3 px-6 py-4 border-t border-gray-100 sticky bottom-0 bg-white rounded-b-2xl">
               <button
                 onClick={handleSave}
                 disabled={saving || !editForm.full_name.trim()}
-                className="bg-[#307ca8] text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-[#307ca8] text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
+                {saving && <Loader2 size={14} className="animate-spin" />}
                 {saving ? 'Salvando...' : 'Salvar cadastro'}
               </button>
               <button
@@ -185,8 +326,8 @@ export function UsersClient({ users, currentUserId }: Props) {
         </div>
       )}
 
+      {/* ── Lista de usuários ─────────────────────────────────────────────── */}
       <div className="space-y-4">
-        {/* Painel de convite */}
         {showInvite && (
           <form
             action={handleInvite}
@@ -201,7 +342,7 @@ export function UsersClient({ users, currentUserId }: Props) {
                   name="full_name"
                   required
                   placeholder="Nome completo"
-                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8]"
                 />
               </div>
               <div>
@@ -211,14 +352,14 @@ export function UsersClient({ users, currentUserId }: Props) {
                   name="email"
                   required
                   placeholder="email@exemplo.com"
-                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8]"
                 />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Perfil</label>
                 <select
                   name="role"
-                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8]"
                 >
                   <option value="user">Usuário</option>
                   <option value="admin">Admin</option>
@@ -275,14 +416,17 @@ export function UsersClient({ users, currentUserId }: Props) {
             <tbody>
               {users.map((user) => {
                 const isMe = user.id === currentUserId
+                const letter = (user.name || user.email).charAt(0).toUpperCase()
                 return (
                   <tr key={user.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-[#307ca8]/10 flex items-center justify-center shrink-0">
-                          <span className="text-xs font-semibold text-[#307ca8]">
-                            {(user.name || user.email).charAt(0).toUpperCase()}
-                          </span>
+                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-[#307ca8]/10 flex items-center justify-center">
+                          {user.avatar_url ? (
+                            <Image src={user.avatar_url} alt={user.name} width={32} height={32} className="object-cover w-full h-full" />
+                          ) : (
+                            <span className="text-xs font-semibold text-[#307ca8]">{letter}</span>
+                          )}
                         </div>
                         <span className="text-sm font-medium text-gray-900">
                           {user.name || '—'}

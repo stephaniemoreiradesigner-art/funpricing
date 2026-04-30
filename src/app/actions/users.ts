@@ -13,7 +13,14 @@ export async function updateUserRole(userId: string, role: UserRole) {
 
 export async function updateUser(
   userId: string,
-  data: { full_name: string; role: UserRole; phone?: string | null; cnpj?: string | null; address?: string | null }
+  data: {
+    full_name: string
+    role: UserRole
+    phone?: string | null
+    cnpj?: string | null
+    address?: string | null
+    avatar_url?: string | null
+  }
 ) {
   const supabase = await createClient()
   await supabase.from('profiles').update(data).eq('id', userId)
