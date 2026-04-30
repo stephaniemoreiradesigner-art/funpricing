@@ -81,6 +81,16 @@ export default function LoginPage() {
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
+
+        <div className="mt-5 pt-5 border-t border-gray-100 text-center">
+          <p className="text-sm text-gray-500 mb-3">Ainda não tem acesso?</p>
+          <a
+            href="/register"
+            className="block w-full border border-[#307ca8] text-[#307ca8] text-sm font-medium py-2 rounded-lg hover:bg-[#307ca8]/5 transition-colors"
+          >
+            Primeiro acesso
+          </a>
+        </div>
       </div>
     </div>
   )
