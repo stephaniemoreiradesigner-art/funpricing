@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Trash2, Plus, ShieldCheck, User } from 'lucide-react'
-import { updateUserRole, deleteUser, inviteUser } from '@/app/actions/users'
+import { Trash2, Plus, Pencil, Check, X } from 'lucide-react'
+import { updateUser, deleteUser, inviteUser } from '@/app/actions/users'
 import type { UserRole } from '@/types'
 
 interface UserRow {
@@ -22,9 +22,26 @@ export function UsersClient({ users, currentUserId }: Props) {
   const [showInvite, setShowInvite] = useState(false)
   const [inviting, setInviting] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editName, setEditName] = useState('')
+  const [editRole, setEditRole] = useState<UserRole>('user')
+  const [savingId, setSavingId] = useState<string | null>(null)
 
-  async function handleRoleChange(userId: string, role: UserRole) {
-    await updateUserRole(userId, role)
+  function startEdit(user: UserRow) {
+    setEditingId(user.id)
+    setEditName(user.name)
+    setEditRole(user.role)
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+  }
+
+  async function handleSave(userId: string) {
+    setSavingId(userId)
+    await updateUser(userId, editName, editRole)
+    setSavingId(null)
+    setEditingId(null)
   }
 
   async function handleDelete(user: UserRow) {
@@ -43,7 +60,6 @@ export function UsersClient({ users, currentUserId }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* Painel de convite */}
       {showInvite && (
         <form
           action={handleInvite}
@@ -55,7 +71,7 @@ export function UsersClient({ users, currentUserId }: Props) {
               <label className="block text-xs font-medium text-gray-600 mb-1">Nome</label>
               <input
                 type="text"
-                name="name"
+                name="full_name"
                 required
                 placeholder="Nome completo"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
@@ -130,52 +146,112 @@ export function UsersClient({ users, currentUserId }: Props) {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-[#307ca8]/10 flex items-center justify-center shrink-0">
-                      <span className="text-xs font-semibold text-[#307ca8]">
-                        {(user.name || user.email).charAt(0).toUpperCase()}
+            {users.map((user) => {
+              const isEditing = editingId === user.id
+              const isSaving = savingId === user.id
+              const isMe = user.id === currentUserId
+
+              return (
+                <tr
+                  key={user.id}
+                  className={`border-b border-gray-100 last:border-0 transition-colors ${isEditing ? 'bg-blue-50' : 'hover:bg-gray-50'}`}
+                >
+                  <td className="px-6 py-3">
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                        placeholder="Nome completo"
+                        autoFocus
+                      />
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-[#307ca8]/10 flex items-center justify-center shrink-0">
+                          <span className="text-xs font-semibold text-[#307ca8]">
+                            {(user.name || user.email).charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="text-sm font-medium text-gray-900">
+                          {user.name || '—'}
+                          {isMe && <span className="ml-1.5 text-xs text-gray-400">(você)</span>}
+                        </span>
+                      </div>
+                    )}
+                  </td>
+
+                  <td className="px-6 py-3 text-sm text-gray-500">{user.email}</td>
+
+                  <td className="px-6 py-3">
+                    {isEditing ? (
+                      <select
+                        value={editRole}
+                        onChange={(e) => setEditRole(e.target.value as UserRole)}
+                        className="bg-white text-gray-900 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                      >
+                        <option value="user">Usuário</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    ) : (
+                      <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${
+                        user.role === 'admin'
+                          ? 'bg-purple-50 text-purple-700'
+                          : 'bg-gray-100 text-gray-500'
+                      }`}>
+                        {user.role === 'admin' ? 'Admin' : 'Usuário'}
                       </span>
-                    </div>
-                    <span className="text-sm font-medium text-gray-900">
-                      {user.name || '—'}
-                      {user.id === currentUserId && (
-                        <span className="ml-1.5 text-xs text-gray-400">(você)</span>
+                    )}
+                  </td>
+
+                  <td className="px-6 py-3 text-sm text-gray-400">
+                    {new Date(user.created_at).toLocaleDateString('pt-BR')}
+                  </td>
+
+                  <td className="px-6 py-3">
+                    <div className="flex items-center justify-end gap-2">
+                      {isEditing ? (
+                        <>
+                          <button
+                            onClick={() => handleSave(user.id)}
+                            disabled={isSaving}
+                            className="text-green-600 hover:text-green-700 transition-colors disabled:opacity-50"
+                            title="Salvar"
+                          >
+                            <Check size={16} />
+                          </button>
+                          <button
+                            onClick={cancelEdit}
+                            className="text-gray-400 hover:text-gray-600 transition-colors"
+                            title="Cancelar"
+                          >
+                            <X size={16} />
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => startEdit(user)}
+                            className="text-gray-400 hover:text-[#307ca8] transition-colors"
+                            title="Editar usuário"
+                          >
+                            <Pencil size={15} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(user)}
+                            disabled={isMe || deletingId === user.id}
+                            className="text-gray-400 hover:text-red-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            title={isMe ? 'Não é possível excluir sua própria conta' : 'Excluir usuário'}
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </>
                       )}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-3 text-sm text-gray-500">{user.email}</td>
-                <td className="px-6 py-3">
-                  <select
-                    defaultValue={user.role}
-                    disabled={user.id === currentUserId}
-                    onChange={(e) => handleRoleChange(user.id, e.target.value as UserRole)}
-                    className="border border-gray-200 rounded-lg px-2.5 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <option value="user">Usuário</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </td>
-                <td className="px-6 py-3 text-sm text-gray-400">
-                  {new Date(user.created_at).toLocaleDateString('pt-BR')}
-                </td>
-                <td className="px-6 py-3">
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => handleDelete(user)}
-                      disabled={user.id === currentUserId || deletingId === user.id}
-                      className="text-gray-400 hover:text-red-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                      title={user.id === currentUserId ? 'Não é possível excluir sua própria conta' : 'Excluir usuário'}
-                    >
-                      <Trash2 size={15} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
 
             {users.length === 0 && (
               <tr>

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Plus, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { ClientActions } from './ClientActions'
+import { ClientsImport } from './ClientsImport'
 import type { Client } from '@/types'
 
 export default async function ClientsPage() {
@@ -24,13 +25,16 @@ export default async function ClientsPage() {
             {isAdmin ? 'Todos os clientes cadastrados.' : 'Seus clientes cadastrados.'}
           </p>
         </div>
-        <Link
-          href="/clients/new"
-          className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-[#256690] transition-colors"
-        >
-          <Plus size={16} />
-          Novo cliente
-        </Link>
+        <div className="flex items-center gap-2">
+          <ClientsImport />
+          <Link
+            href="/clients/new"
+            className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-[#256690] transition-colors"
+          >
+            <Plus size={16} />
+            Novo cliente
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

@@ -11,6 +11,12 @@ export async function updateUserRole(userId: string, role: UserRole) {
   revalidatePath('/admin/users')
 }
 
+export async function updateUser(userId: string, full_name: string, role: UserRole) {
+  const supabase = await createClient()
+  await supabase.from('profiles').update({ full_name, role }).eq('id', userId)
+  revalidatePath('/admin/users')
+}
+
 export async function deleteUser(userId: string) {
   const admin = createAdminClient()
   await admin.auth.admin.deleteUser(userId)
@@ -19,7 +25,7 @@ export async function deleteUser(userId: string) {
 
 export async function inviteUser(formData: FormData) {
   const email = formData.get('email') as string
-  const name = formData.get('name') as string
+  const full_name = formData.get('full_name') as string
   const role = (formData.get('role') as UserRole) ?? 'user'
 
   const admin = createAdminClient()
@@ -28,14 +34,15 @@ export async function inviteUser(formData: FormData) {
   const { data, error } = await admin.auth.admin.createUser({
     email,
     email_confirm: true,
-    user_metadata: { name },
+    user_metadata: { full_name },
   })
 
   if (error || !data.user) throw error
 
   await supabase.from('profiles').upsert({
     id: data.user.id,
-    name,
+    email,
+    full_name,
     role,
   })
 

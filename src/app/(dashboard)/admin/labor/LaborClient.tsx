@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { Pencil, Trash2, Check, X, Plus } from 'lucide-react'
-import { createLabor, updateLabor, deleteLabor } from '@/app/actions/labor'
+import { useRef, useState } from 'react'
+import { Pencil, Trash2, Check, X, Plus, Upload, FileDown } from 'lucide-react'
+import { createLabor, updateLabor, deleteLabor, importLaborCSV } from '@/app/actions/labor'
 import { formatCurrency } from '@/lib/calculations'
 import type { Labor } from '@/types'
 
@@ -18,6 +18,43 @@ const LEVEL_COLORS: Record<Labor['level'], string> = {
   senior: 'bg-purple-50 text-purple-700',
 }
 
+function parseCSV(text: string): Record<string, string>[] {
+  const lines = text.trim().split(/\r?\n/)
+  if (lines.length < 2) return []
+  const sep = lines[0].includes(';') ? ';' : ','
+  const headers = lines[0].split(sep).map((h) => h.trim().replace(/^["']|["']$/g, '').toLowerCase())
+  return lines
+    .slice(1)
+    .filter((l) => l.trim())
+    .map((line) => {
+      const values = line.split(sep).map((v) => v.trim().replace(/^["']|["']$/g, ''))
+      return Object.fromEntries(headers.map((h, i) => [h, values[i] ?? '']))
+    })
+}
+
+function normalizeLevel(raw: string): Labor['level'] {
+  const l = raw.toLowerCase().trim()
+  if (['júnior', 'junior', 'jr'].includes(l)) return 'junior'
+  if (['sênior', 'senior', 'sr'].includes(l)) return 'senior'
+  return 'pleno'
+}
+
+function downloadTemplate() {
+  const rows = [
+    'cargo,nivel,salario_mensal',
+    'Desenvolvedor Front-end,pleno,8000',
+    'Designer UX,senior,12000',
+    'Redator,junior,4000',
+  ]
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'modelo-mao-de-obra.csv'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 interface Props {
   items: Labor[]
 }
@@ -26,6 +63,8 @@ export function LaborClient({ items }: Props) {
   const [adding, setAdding] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [importing, setImporting] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
 
   async function handleCreate(formData: FormData) {
     await createLabor(formData)
@@ -42,6 +81,40 @@ export function LaborClient({ items }: Props) {
     setDeletingId(id)
     await deleteLabor(id)
     setDeletingId(null)
+  }
+
+  async function handleCSVChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const text = await file.text()
+    const parsed = parseCSV(text)
+
+    const valid = parsed
+      .map((r) => ({
+        title: r.cargo || r.titulo || r.title || '',
+        level: normalizeLevel(r.nivel || r.level || 'pleno'),
+        monthly_salary: parseFloat(
+          (r.salario_mensal || r.salario || r.monthly_salary || '0').replace(',', '.')
+        ),
+      }))
+      .filter((r) => r.title && r.monthly_salary > 0)
+
+    if (valid.length === 0) {
+      alert('Nenhum registro válido encontrado. Verifique o formato do CSV.')
+      e.target.value = ''
+      return
+    }
+
+    if (!confirm(`Importar ${valid.length} profissional(is)? Registros duplicados serão adicionados.`)) {
+      e.target.value = ''
+      return
+    }
+
+    setImporting(true)
+    await importLaborCSV(valid)
+    setImporting(false)
+    e.target.value = ''
   }
 
   function startAdding() {
@@ -61,13 +134,32 @@ export function LaborClient({ items }: Props) {
           <h3 className="font-semibold text-gray-900">Profissionais</h3>
           <p className="text-xs text-gray-400 mt-0.5">{items.length} cadastrado{items.length !== 1 ? 's' : ''}</p>
         </div>
-        <button
-          onClick={startAdding}
-          className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#256690] transition-colors"
-        >
-          <Plus size={16} />
-          Adicionar
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={downloadTemplate}
+            className="flex items-center gap-1.5 border border-gray-300 text-gray-600 text-sm font-medium px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            title="Baixar modelo CSV"
+          >
+            <FileDown size={15} />
+            Modelo CSV
+          </button>
+          <button
+            onClick={() => fileRef.current?.click()}
+            disabled={importing}
+            className="flex items-center gap-1.5 border border-[#307ca8] text-[#307ca8] text-sm font-medium px-3 py-2 rounded-lg hover:bg-[#307ca8]/5 transition-colors disabled:opacity-50"
+          >
+            <Upload size={15} />
+            {importing ? 'Importando...' : 'Importar CSV'}
+          </button>
+          <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleCSVChange} />
+          <button
+            onClick={startAdding}
+            className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#256690] transition-colors"
+          >
+            <Plus size={16} />
+            Adicionar
+          </button>
+        </div>
       </div>
 
       <table className="w-full">
@@ -134,7 +226,7 @@ export function LaborClient({ items }: Props) {
           {items.length === 0 && !adding && (
             <tr>
               <td colSpan={5} className="px-6 py-10 text-center text-sm text-gray-400">
-                Nenhum profissional cadastrado ainda. Clique em &quot;Adicionar&quot; para começar.
+                Nenhum profissional cadastrado ainda. Clique em &quot;Adicionar&quot; ou importe um CSV.
               </td>
             </tr>
           )}
@@ -175,7 +267,7 @@ function LaborRow({
           defaultValue={item?.title ?? ''}
           placeholder="Ex: Desenvolvedor Front-end"
           required
-          className="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+          className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
         />
       </td>
       <td className="px-6 py-2.5">
@@ -183,7 +275,7 @@ function LaborRow({
           form={formId}
           name="level"
           defaultValue={item?.level ?? 'pleno'}
-          className="border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+          className="bg-white text-gray-900 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
         >
           <option value="junior">Júnior</option>
           <option value="pleno">Pleno</option>
@@ -192,7 +284,7 @@ function LaborRow({
       </td>
       <td className="px-6 py-2.5">
         <div className="relative w-40">
-          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm">R$</span>
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 text-sm pointer-events-none">R$</span>
           <input
             form={formId}
             type="number"
@@ -202,11 +294,11 @@ function LaborRow({
             step={100}
             onChange={(e) => setSalary(parseFloat(e.target.value) || 0)}
             required
-            className="w-full border border-gray-300 rounded-lg pl-8 pr-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+            className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg pl-9 pr-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
           />
         </div>
       </td>
-      <td className="px-6 py-2.5 text-sm text-gray-500">
+      <td className="px-6 py-2.5 text-sm font-medium text-gray-700">
         {formatCurrency(hourlyRate)}/h
       </td>
       <td className="px-6 py-2.5">

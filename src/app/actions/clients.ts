@@ -50,3 +50,26 @@ export async function deleteClientAction(id: string) {
   await supabase.from('clients').delete().eq('id', id)
   revalidatePath('/clients')
 }
+
+export async function importClientsCSV(
+  rows: Array<{
+    razao_social: string
+    nome_fantasia?: string | null
+    cnpj?: string | null
+    ie?: string | null
+    im?: string | null
+    responsible?: string | null
+    phone?: string | null
+    email?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zip?: string | null
+  }>
+) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const records = rows.map((row) => ({ ...row, created_by: user!.id }))
+  await supabase.from('clients').insert(records)
+  revalidatePath('/clients')
+}

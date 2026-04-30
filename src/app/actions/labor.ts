@@ -41,3 +41,18 @@ export async function deleteLabor(id: string) {
   revalidatePath('/admin/labor')
   revalidatePath('/admin/products')
 }
+
+export async function importLaborCSV(
+  rows: Array<{ title: string; level: string; monthly_salary: number }>
+) {
+  const supabase = await createClient()
+  const records = rows.map((row) => ({
+    title: row.title,
+    level: row.level,
+    monthly_salary: row.monthly_salary,
+    hourly_rate: calcLaborHourlyRate(row.monthly_salary),
+  }))
+  await supabase.from('labor').insert(records)
+  revalidatePath('/admin/labor')
+  revalidatePath('/admin/products')
+}
