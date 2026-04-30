@@ -13,7 +13,8 @@
       "mcp__claude_ai_Supabase__list_projects",
       "mcp__claude_ai_Supabase__execute_sql",
       "Bash(grep -E \"\\\\.\\(sql|ts\\)$\")",
-      "mcp__claude_ai_Supabase__list_tables"
+      "mcp__claude_ai_Supabase__list_tables",
+      "Bash(git status *)"
     ],
     "additionalDirectories": [
       "g:\\Meu Drive\\End\\Projetos E2E - F2F\\Fun`Pricing\\fanpricing"
