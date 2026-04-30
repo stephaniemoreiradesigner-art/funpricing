@@ -2,13 +2,16 @@ export type UserRole = 'user' | 'admin'
 
 export interface Profile {
   id: string
-  name: string
+  email: string
+  full_name: string | null
   role: UserRole
+  is_active: boolean
   avatar_url: string | null
   phone: string | null
   cnpj: string | null
   address: string | null
   created_at: string
+  updated_at: string | null
 }
 
 export interface Client {

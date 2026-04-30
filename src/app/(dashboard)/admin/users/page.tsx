@@ -14,7 +14,7 @@ export default async function UsersPage() {
     { data: profiles },
   ] = await Promise.all([
     admin.auth.admin.listUsers(),
-    supabase.from('profiles').select('id, name, role'),
+    supabase.from('profiles').select('id, full_name, role'),
   ])
 
   const profileMap = new Map(
@@ -26,7 +26,7 @@ export default async function UsersPage() {
     return {
       id: u.id,
       email: u.email ?? '',
-      name: profile?.name ?? '',
+      name: (profile as { full_name?: string } | undefined)?.full_name ?? '',
       role: (profile?.role ?? 'user') as UserRole,
       created_at: u.created_at,
     }

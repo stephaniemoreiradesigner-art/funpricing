@@ -9,7 +9,8 @@ export async function updateProfile(formData: FormData) {
 
   const payload = {
     id: user!.id,
-    name: formData.get('name') as string,
+    email: user!.email!,
+    full_name: (formData.get('full_name') as string) || null,
     phone: (formData.get('phone') as string) || null,
     address: (formData.get('address') as string) || null,
     cnpj: (formData.get('cnpj') as string) || null,

@@ -16,12 +16,12 @@ export default async function DashboardLayout({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, role')
+    .select('full_name, role')
     .eq('id', user.id)
     .single()
 
   const role = (profile?.role ?? 'user') as UserRole
-  const name = profile?.name ?? user.email ?? 'Usuário'
+  const name = profile?.full_name ?? user.email ?? 'Usuário'
 
   return (
     <div className="min-h-screen bg-gray-50">

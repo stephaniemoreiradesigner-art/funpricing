@@ -96,10 +96,10 @@ export default async function SettingsPage() {
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-[#307ca8] flex items-center justify-center text-white font-bold text-lg">
-            {(profile?.name || user?.email || 'U').charAt(0).toUpperCase()}
+            {(profile?.full_name || user?.email || 'U').charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-900">{profile?.name || '—'}</p>
+            <p className="text-sm font-semibold text-gray-900">{profile?.full_name || '—'}</p>
             <p className="text-xs text-gray-400">{user?.email}</p>
             <span className={`inline-block mt-0.5 text-xs font-medium px-2 py-0.5 rounded-full ${
               isAdmin ? 'bg-purple-50 text-purple-700' : 'bg-gray-100 text-gray-500'
@@ -109,7 +109,7 @@ export default async function SettingsPage() {
           </div>
         </div>
 
-        <ProfileForm profile={(profile ?? { id: user!.id, name: '', role: 'user', avatar_url: null, phone: null, cnpj: null, address: null, created_at: '' }) as Profile} />
+        <ProfileForm profile={(profile ?? { id: user!.id, email: user!.email ?? '', full_name: null, role: 'user', is_active: true, avatar_url: null, phone: null, cnpj: null, address: null, created_at: '', updated_at: null }) as Profile} />
       </div>
     </div>
   )

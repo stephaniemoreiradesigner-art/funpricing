@@ -29,8 +29,8 @@ export function ProfileForm({ profile }: Props) {
           <label className="block text-sm font-medium text-gray-800 mb-1">Nome completo *</label>
           <input
             type="text"
-            name="name"
-            defaultValue={profile.name ?? ''}
+            name="full_name"
+            defaultValue={profile.full_name ?? ''}
             required
             className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
           />
