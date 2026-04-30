@@ -11,9 +11,12 @@ export async function updateUserRole(userId: string, role: UserRole) {
   revalidatePath('/admin/users')
 }
 
-export async function updateUser(userId: string, full_name: string, role: UserRole) {
+export async function updateUser(
+  userId: string,
+  data: { full_name: string; role: UserRole; phone?: string | null; cnpj?: string | null; address?: string | null }
+) {
   const supabase = await createClient()
-  await supabase.from('profiles').update({ full_name, role }).eq('id', userId)
+  await supabase.from('profiles').update(data).eq('id', userId)
   revalidatePath('/admin/users')
 }
 

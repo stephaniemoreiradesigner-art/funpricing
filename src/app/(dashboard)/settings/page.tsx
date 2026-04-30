@@ -1,8 +1,6 @@
 import Link from 'next/link'
 import { Settings, UserCog, Package, Hammer, Percent, Palette } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { ProfileForm } from './ProfileForm'
-import type { Profile } from '@/types'
 
 const ADMIN_SECTIONS = [
   {
@@ -48,7 +46,7 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
+    .select('full_name, role')
     .eq('id', user!.id)
     .single()
 
@@ -62,12 +60,11 @@ export default async function SettingsPage() {
         </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Configurações</h2>
-          <p className="text-sm text-gray-500 mt-0.5">Gerencie seu perfil e preferências.</p>
+          <p className="text-sm text-gray-500 mt-0.5">Gerencie as configurações do sistema.</p>
         </div>
       </div>
 
-      {/* Hub de admin */}
-      {isAdmin && (
+      {isAdmin ? (
         <div className="space-y-4">
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
             Administração
@@ -90,27 +87,12 @@ export default async function SettingsPage() {
             ))}
           </div>
         </div>
-      )}
-
-      {/* Perfil do usuário */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-[#307ca8] flex items-center justify-center text-white font-bold text-lg">
-            {(profile?.full_name || user?.email || 'U').charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-gray-900">{profile?.full_name || '—'}</p>
-            <p className="text-xs text-gray-400">{user?.email}</p>
-            <span className={`inline-block mt-0.5 text-xs font-medium px-2 py-0.5 rounded-full ${
-              isAdmin ? 'bg-purple-50 text-purple-700' : 'bg-gray-100 text-gray-500'
-            }`}>
-              {isAdmin ? 'Admin' : 'Usuário'}
-            </span>
-          </div>
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
+          <p className="text-sm text-gray-500">Você não tem permissão de administrador.</p>
+          <p className="text-xs text-gray-400 mt-1">Entre em contato com um administrador para alterar seu acesso.</p>
         </div>
-
-        <ProfileForm profile={(profile ?? { id: user!.id, email: user!.email ?? '', full_name: null, role: 'user', is_active: true, avatar_url: null, phone: null, cnpj: null, address: null, created_at: '', updated_at: null }) as Profile} />
-      </div>
+      )}
     </div>
   )
 }
