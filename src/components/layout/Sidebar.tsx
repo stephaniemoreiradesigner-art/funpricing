@@ -11,12 +11,6 @@ import {
   FileSignature,
   BarChart2,
   Settings,
-  ShieldCheck,
-  Package,
-  Hammer,
-  Percent,
-  Palette,
-  UserCog,
   LogOut,
 } from 'lucide-react'
 import { logout } from '@/app/actions/auth'
@@ -32,13 +26,6 @@ const navUser = [
   { href: '/settings', label: 'Configurações', icon: Settings },
 ]
 
-const navAdmin = [
-  { href: '/admin/users', label: 'Usuários', icon: UserCog },
-  { href: '/admin/products', label: 'Produtos', icon: Package },
-  { href: '/admin/labor', label: 'Mão de Obra', icon: Hammer },
-  { href: '/admin/markup', label: 'Markup', icon: Percent },
-  { href: '/admin/customization', label: 'Personalização', icon: Palette },
-]
 
 interface SidebarProps {
   role: UserRole
@@ -93,19 +80,6 @@ export function Sidebar({ role, userName, avatarUrl }: SidebarProps) {
           <NavItem key={item.href} {...item} />
         ))}
 
-        {role === 'admin' && (
-          <>
-            <div className="pt-4 pb-1">
-              <div className="flex items-center gap-2 px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                <ShieldCheck size={12} />
-                Admin
-              </div>
-            </div>
-            {navAdmin.map((item) => (
-              <NavItem key={item.href} {...item} />
-            ))}
-          </>
-        )}
       </nav>
 
       {/* Rodapé do usuário */}
