@@ -33,7 +33,10 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-md p-8">
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#307ca8] mb-4">
+          <div
+            className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4"
+            style={{ backgroundColor: 'var(--brand)' }}
+          >
             <span className="text-white font-bold text-xl">F</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">FanPricing</h1>
@@ -51,6 +54,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+              style={{ color: 'var(--brand)' }}
               placeholder="seu@email.com"
             />
           </div>
@@ -65,6 +69,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+              style={{ color: 'var(--brand)' }}
               placeholder="••••••••"
             />
           </div>
@@ -76,7 +81,8 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#307ca8] hover:bg-[#256690] text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ backgroundColor: 'var(--brand)' }}
           >
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
@@ -86,7 +92,8 @@ export default function LoginPage() {
           <p className="text-sm text-gray-500 mb-3">Ainda não tem acesso?</p>
           <a
             href="/register"
-            className="block w-full border border-[#307ca8] text-[#307ca8] text-sm font-medium py-2 rounded-lg hover:bg-[#307ca8]/5 transition-colors"
+            className="block w-full border text-sm font-medium py-2 rounded-lg transition-colors"
+            style={{ borderColor: 'var(--brand)', color: 'var(--brand)' }}
           >
             Primeiro acesso
           </a>

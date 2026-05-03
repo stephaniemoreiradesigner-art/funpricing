@@ -31,9 +31,10 @@ interface SidebarProps {
   role: UserRole
   userName: string
   avatarUrl: string | null
+  logoUrl: string | null
 }
 
-export function Sidebar({ role, userName, avatarUrl }: SidebarProps) {
+export function Sidebar({ role, userName, avatarUrl, logoUrl }: SidebarProps) {
   const pathname = usePathname()
   const { isOpen, close } = useSidebar()
 
@@ -47,8 +48,9 @@ export function Sidebar({ role, userName, avatarUrl }: SidebarProps) {
         href={href}
         onClick={close}
         className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-          active ? 'bg-[#307ca8] text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+          active ? 'text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
         }`}
+        style={active ? { backgroundColor: 'var(--brand)' } : undefined}
       >
         <Icon size={18} />
         {label}
@@ -60,10 +62,7 @@ export function Sidebar({ role, userName, avatarUrl }: SidebarProps) {
     <>
       {/* Overlay mobile */}
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
-          onClick={close}
-        />
+        <div className="fixed inset-0 bg-black/50 z-20 md:hidden" onClick={close} />
       )}
 
       <aside
@@ -71,12 +70,27 @@ export function Sidebar({ role, userName, avatarUrl }: SidebarProps) {
           transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
-        {/* Logo */}
+        {/* Logo da empresa */}
         <div className="flex items-center gap-2 px-4 h-16 border-b border-gray-200 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-[#307ca8] flex items-center justify-center">
-            <span className="text-white font-bold text-sm">F</span>
-          </div>
-          <span className="font-bold text-gray-900">FanPricing</span>
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt="Logo"
+              width={120}
+              height={32}
+              className="h-8 w-auto object-contain"
+            />
+          ) : (
+            <>
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                style={{ backgroundColor: 'var(--brand)' }}
+              >
+                <span className="text-white font-bold text-sm">F</span>
+              </div>
+              <span className="font-bold text-gray-900">FanPricing</span>
+            </>
+          )}
         </div>
 
         {/* Navegação */}
