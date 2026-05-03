@@ -240,7 +240,7 @@ export function UsersClient({ users, currentUserId }: Props) {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-gray-800 mb-1">CNPJ / CPF</label>
                       <input
@@ -264,7 +264,7 @@ export function UsersClient({ users, currentUserId }: Props) {
                   </div>
 
                   {/* CEP + endereço */}
-                  <div className="grid grid-cols-[1fr_2fr] gap-3 items-end">
+                  <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-3 items-end">
                     <div>
                       <label className="block text-sm font-medium text-gray-800 mb-1">CEP</label>
                       <div className="relative">
@@ -406,6 +406,7 @@ export function UsersClient({ users, currentUserId }: Props) {
             </button>
           </div>
 
+          <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider">
@@ -480,6 +481,7 @@ export function UsersClient({ users, currentUserId }: Props) {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </>

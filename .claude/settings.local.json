@@ -14,7 +14,16 @@
       "mcp__claude_ai_Supabase__execute_sql",
       "Bash(grep -E \"\\\\.\\(sql|ts\\)$\")",
       "mcp__claude_ai_Supabase__list_tables",
-      "Bash(git status *)"
+      "Bash(git status *)",
+      "Bash(git commit -m 'fix: corrige start command para output standalone *)",
+      "Bash(git push *)",
+      "Bash(git commit -m 'fix: adiciona rota /api/health para healthcheck do Coolify *)",
+      "Bash(git commit -m 'fix: adiciona Dockerfile com curl para healthcheck do Coolify *)",
+      "Bash(git commit -m 'fix: admin/users resistente a SUPABASE_SERVICE_ROLE_KEY ausente *)",
+      "Bash(git commit -m 'feat: página de primeiro acesso com auto-cadastro *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Projects\\\\fanpricing\\\\src\\\\app\\\\\\(dashboard\\)\" -Recurse -Filter \"*.tsx\")",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Find /c/Projects/fanpricing -type f -name \"tailwind.config.*\" -o -name \"next.config.*\")"
     ],
     "additionalDirectories": [
       "g:\\Meu Drive\\End\\Projetos E2E - F2F\\Fun`Pricing\\fanpricing"

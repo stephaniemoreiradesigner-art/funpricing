@@ -14,18 +14,18 @@ import {
   LogOut,
 } from 'lucide-react'
 import { logout } from '@/app/actions/auth'
+import { useSidebar } from './SidebarProvider'
 import type { UserRole } from '@/types'
 
-const navUser = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/clients', label: 'Clientes', icon: Users },
-  { href: '/quotes', label: 'Orçamentos', icon: FileText },
-  { href: '/proposals', label: 'Propostas', icon: Send },
-  { href: '/contracts', label: 'Contratos', icon: FileSignature },
-  { href: '/stats', label: 'Estatísticas', icon: BarChart2 },
-  { href: '/settings', label: 'Configurações', icon: Settings },
+const navItems = [
+  { href: '/dashboard',  label: 'Dashboard',    icon: LayoutDashboard },
+  { href: '/clients',    label: 'Clientes',      icon: Users },
+  { href: '/quotes',     label: 'Orçamentos',    icon: FileText },
+  { href: '/proposals',  label: 'Propostas',     icon: Send },
+  { href: '/contracts',  label: 'Contratos',     icon: FileSignature },
+  { href: '/stats',      label: 'Estatísticas',  icon: BarChart2 },
+  { href: '/settings',   label: 'Configurações', icon: Settings },
 ]
-
 
 interface SidebarProps {
   role: UserRole
@@ -35,16 +35,19 @@ interface SidebarProps {
 
 export function Sidebar({ role, userName, avatarUrl }: SidebarProps) {
   const pathname = usePathname()
+  const { isOpen, close } = useSidebar()
+
+  const initials = userName.split(' ').slice(0, 2).map((n) => n[0]).join('').toUpperCase()
+  const firstName = userName.includes('@') ? userName.split('@')[0] : userName.split(' ')[0]
 
   function NavItem({ href, label, icon: Icon }: { href: string; label: string; icon: React.ElementType }) {
     const active = pathname === href || pathname.startsWith(href + '/')
     return (
       <Link
         href={href}
+        onClick={close}
         className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-          active
-            ? 'bg-[#307ca8] text-white'
-            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+          active ? 'bg-[#307ca8] text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
         }`}
       >
         <Icon size={18} />
@@ -53,66 +56,59 @@ export function Sidebar({ role, userName, avatarUrl }: SidebarProps) {
     )
   }
 
-  const initials = userName
-    .split(' ')
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-
-  const firstName = userName.includes('@')
-    ? userName.split('@')[0]
-    : userName.split(' ')[0]
-
   return (
-    <aside className="fixed left-0 top-0 h-full w-60 bg-white border-r border-gray-200 flex flex-col z-30">
-      {/* Logo */}
-      <div className="flex items-center gap-2 px-4 h-16 border-b border-gray-200">
-        <div className="w-8 h-8 rounded-lg bg-[#307ca8] flex items-center justify-center">
-          <span className="text-white font-bold text-sm">F</span>
-        </div>
-        <span className="font-bold text-gray-900">FanPricing</span>
-      </div>
+    <>
+      {/* Overlay mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          onClick={close}
+        />
+      )}
 
-      {/* Navegação principal */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {navUser.map((item) => (
-          <NavItem key={item.href} {...item} />
-        ))}
-
-      </nav>
-
-      {/* Rodapé do usuário */}
-      <div className="bg-[#1d3a52] px-4 py-3">
-        <div className="flex items-center gap-3">
-          {/* Avatar */}
-          <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-[#307ca8] flex items-center justify-center">
-            {avatarUrl ? (
-              <Image src={avatarUrl} alt={userName} width={40} height={40} className="object-cover w-full h-full" />
-            ) : (
-              <span className="text-white font-bold text-sm">{initials}</span>
-            )}
+      <aside
+        className={`fixed left-0 top-0 h-full w-60 bg-white border-r border-gray-200 flex flex-col z-30
+          transition-transform duration-300 ease-in-out
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-2 px-4 h-16 border-b border-gray-200 shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-[#307ca8] flex items-center justify-center">
+            <span className="text-white font-bold text-sm">F</span>
           </div>
-
-          {/* Nome + role + versão */}
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-white truncate">{firstName}</p>
-            <p className="text-xs text-blue-200">{role === 'admin' ? 'Admin' : 'Usuário'}</p>
-            <p className="text-xs text-blue-300/50">v1</p>
-          </div>
-
-          {/* Logout */}
-          <form action={logout}>
-            <button
-              type="submit"
-              className="text-blue-200 hover:text-white transition-colors p-1"
-              title="Sair"
-            >
-              <LogOut size={18} />
-            </button>
-          </form>
+          <span className="font-bold text-gray-900">FanPricing</span>
         </div>
-      </div>
-    </aside>
+
+        {/* Navegação */}
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          {navItems.map((item) => (
+            <NavItem key={item.href} {...item} />
+          ))}
+        </nav>
+
+        {/* Rodapé do usuário */}
+        <div className="bg-[#1d3a52] px-4 py-3 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-[#307ca8] flex items-center justify-center">
+              {avatarUrl ? (
+                <Image src={avatarUrl} alt={userName} width={40} height={40} className="object-cover w-full h-full" />
+              ) : (
+                <span className="text-white font-bold text-sm">{initials}</span>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-white truncate">{firstName}</p>
+              <p className="text-xs text-blue-200">{role === 'admin' ? 'Admin' : 'Usuário'}</p>
+              <p className="text-xs text-blue-300/50">v1</p>
+            </div>
+            <form action={logout}>
+              <button type="submit" className="text-blue-200 hover:text-white transition-colors p-1" title="Sair">
+                <LogOut size={18} />
+              </button>
+            </form>
+          </div>
+        </div>
+      </aside>
+    </>
   )
 }

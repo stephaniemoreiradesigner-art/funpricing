@@ -33,7 +33,7 @@ export default async function ProposalsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Propostas</h2>
           <p className="text-sm text-gray-500 mt-1">Propostas geradas a partir de orçamentos.</p>
@@ -61,6 +61,7 @@ export default async function ProposalsPage() {
             </Link>
           </div>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider">
@@ -99,6 +100,7 @@ export default async function ProposalsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

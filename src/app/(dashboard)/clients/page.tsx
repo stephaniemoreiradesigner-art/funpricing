@@ -18,21 +18,22 @@ export default async function ClientsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Clientes</h2>
           <p className="text-sm text-gray-500 mt-1">
             {isAdmin ? 'Todos os clientes cadastrados.' : 'Seus clientes cadastrados.'}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <ClientsImport />
           <Link
             href="/clients/new"
             className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-[#256690] transition-colors"
           >
             <Plus size={16} />
-            Novo cliente
+            <span className="hidden sm:inline">Novo cliente</span>
+            <span className="sm:hidden">Novo</span>
           </Link>
         </div>
       </div>
@@ -51,6 +52,7 @@ export default async function ClientsPage() {
             </Link>
           </div>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider">
@@ -95,6 +97,7 @@ export default async function ClientsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

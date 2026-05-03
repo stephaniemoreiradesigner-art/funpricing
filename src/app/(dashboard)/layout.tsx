@@ -2,13 +2,10 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Header } from '@/components/layout/Header'
+import { SidebarProvider } from '@/components/layout/SidebarProvider'
 import type { UserRole } from '@/types'
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -25,14 +22,16 @@ export default async function DashboardLayout({
   const avatarUrl = (profile as { avatar_url?: string | null } | null)?.avatar_url ?? null
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar role={role} userName={name} avatarUrl={avatarUrl} />
-      <div className="ml-60 flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 p-6">
-          {children}
-        </main>
+    <SidebarProvider>
+      <div className="min-h-screen bg-gray-50">
+        <Sidebar role={role} userName={name} avatarUrl={avatarUrl} />
+        <div className="md:ml-60 flex flex-col min-h-screen">
+          <Header />
+          <main className="flex-1 p-4 md:p-6">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   )
 }
