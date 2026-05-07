@@ -1,9 +1,24 @@
 import { redirect } from 'next/navigation'
+import { cache } from 'react'
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Header } from '@/components/layout/Header'
 import { SidebarProvider } from '@/components/layout/SidebarProvider'
 import type { UserRole } from '@/types'
+
+const getCustomization = cache(async () => {
+  const admin = createAdminClient()
+  const { data } = await admin.from('customization').select('brand_color, logo_url, company_name').maybeSingle()
+  return data
+})
+
+export async function generateMetadata(): Promise<Metadata> {
+  const customization = await getCustomization()
+  const title = customization?.company_name || 'FanPricing'
+  return { title }
+}
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -11,13 +26,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (!user) redirect('/login')
 
-  const [profileResult, customizationResult] = await Promise.all([
+  const [profileResult, customization] = await Promise.all([
     supabase.from('profiles').select('full_name, role, avatar_url').eq('id', user.id).single(),
-    supabase.from('customization').select('brand_color, logo_url').maybeSingle(),
+    getCustomization(),
   ])
 
   const profile = profileResult.data
-  const customization = customizationResult.data
 
   const role = (profile?.role ?? 'user') as UserRole
   const name = profile?.full_name ?? user.email ?? 'Usuário'
@@ -25,15 +39,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const brandColor = customization?.brand_color ?? '#307ca8'
   const logoUrl = customization?.logo_url ?? null
 
-  // Calcula cor escura para hover (reduz luminosidade ~15%)
-  const brandDark = brandColor
-
   return (
     <SidebarProvider>
-      {/* Injeta CSS variable com a cor da marca salva no banco */}
-      {brandColor !== '#307ca8' && (
-        <style>{`:root { --brand: ${brandColor}; --brand-dark: ${brandDark}; }`}</style>
-      )}
+      <style>{`:root { --brand: ${brandColor}; --brand-dark: ${brandColor}; }`}</style>
       <div className="min-h-screen bg-gray-50">
         <Sidebar role={role} userName={name} avatarUrl={avatarUrl} logoUrl={logoUrl} />
         <div className="md:ml-60 flex flex-col min-h-screen">

@@ -24,5 +24,5 @@ export async function saveCustomization(formData: FormData) {
     await supabase.from('customization').insert(payload)
   }
 
-  revalidatePath('/admin/customization')
+  revalidatePath('/', 'layout')
 }

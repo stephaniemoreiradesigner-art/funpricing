@@ -22,8 +22,8 @@ export async function updateUser(
     avatar_url?: string | null
   }
 ) {
-  const supabase = await createClient()
-  await supabase.from('profiles').update(data).eq('id', userId)
+  const admin = createAdminClient()
+  await admin.from('profiles').update(data).eq('id', userId)
   revalidatePath('/admin/users')
 }
 

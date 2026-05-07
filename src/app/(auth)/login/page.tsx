@@ -45,7 +45,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--brand)' }}>
               E-mail
             </label>
             <input
@@ -53,23 +53,28 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
-              style={{ color: 'var(--brand)' }}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:border-transparent"
+              style={{ '--tw-ring-color': 'var(--brand)' } as React.CSSProperties}
               placeholder="seu@email.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Senha
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium" style={{ color: 'var(--brand)' }}>
+                Senha
+              </label>
+              <a href="/forgot-password" className="text-xs hover:underline" style={{ color: 'var(--brand)' }}>
+                Esqueceu a senha?
+              </a>
+            </div>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
-              style={{ color: 'var(--brand)' }}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:border-transparent"
+              style={{ '--tw-ring-color': 'var(--brand)' } as React.CSSProperties}
               placeholder="••••••••"
             />
           </div>
