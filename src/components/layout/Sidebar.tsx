@@ -101,9 +101,9 @@ export function Sidebar({ role, userName, avatarUrl, logoUrl }: SidebarProps) {
         </nav>
 
         {/* Rodapé do usuário */}
-        <div className="bg-[#1d3a52] px-4 py-3 shrink-0">
+        <div className="px-4 py-3 shrink-0" style={{ backgroundColor: 'var(--brand-dark)' }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-[var(--brand)] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-white/20 flex items-center justify-center">
               {avatarUrl ? (
                 <Image src={avatarUrl} alt={userName} width={40} height={40} className="object-cover w-full h-full" />
               ) : (
@@ -112,11 +112,11 @@ export function Sidebar({ role, userName, avatarUrl, logoUrl }: SidebarProps) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-white truncate">{firstName}</p>
-              <p className="text-xs text-blue-200">{role === 'admin' ? 'Admin' : 'Usuário'}</p>
-              <p className="text-xs text-blue-300/50">v1</p>
+              <p className="text-xs text-white/70">{role === 'admin' ? 'Admin' : 'Usuário'}</p>
+              <p className="text-xs text-white/30">v1</p>
             </div>
             <form action={logout}>
-              <button type="submit" className="text-blue-200 hover:text-white transition-colors p-1" title="Sair">
+              <button type="submit" className="text-white/70 hover:text-white transition-colors p-1" title="Sair">
                 <LogOut size={18} />
               </button>
             </form>
