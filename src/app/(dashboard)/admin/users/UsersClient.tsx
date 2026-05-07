@@ -82,6 +82,7 @@ export function UsersClient({ users, currentUserId }: Props) {
     full_name: '', role: 'user', phone: '', cnpj: '', cep: '', address: '', avatar_url: null,
   })
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [cepLoading, setCepLoading] = useState(false)
@@ -89,6 +90,7 @@ export function UsersClient({ users, currentUserId }: Props) {
   const avatarInputRef = useRef<HTMLInputElement>(null)
 
   function openEdit(user: UserRow) {
+    setSaveError(null)
     setEditForm({
       full_name: user.name,
       role: user.role,
@@ -147,7 +149,7 @@ export function UsersClient({ users, currentUserId }: Props) {
       }
     }
 
-    await updateUser(editingUser.id, {
+    const result = await updateUser(editingUser.id, {
       full_name: editForm.full_name,
       role: editForm.role,
       phone: editForm.phone || null,
@@ -157,6 +159,10 @@ export function UsersClient({ users, currentUserId }: Props) {
     })
 
     setSaving(false)
+    if (result.error) {
+      setSaveError(result.error)
+      return
+    }
     setEditingUser(null)
   }
 
@@ -307,6 +313,10 @@ export function UsersClient({ users, currentUserId }: Props) {
                 </select>
               </div>
             </div>
+
+            {saveError && (
+              <p className="text-xs text-red-500 px-6 pb-2">Erro ao salvar: {saveError}</p>
+            )}
 
             {/* Footer do modal */}
             <div className="flex items-center gap-3 px-6 py-4 border-t border-gray-100 sticky bottom-0 bg-white rounded-b-2xl">

@@ -21,10 +21,12 @@ export async function updateUser(
     address?: string | null
     avatar_url?: string | null
   }
-) {
+): Promise<{ error?: string }> {
   const admin = createAdminClient()
-  await admin.from('profiles').update(data).eq('id', userId)
+  const { error } = await admin.from('profiles').update(data).eq('id', userId)
+  if (error) return { error: error.message }
   revalidatePath('/admin/users')
+  return {}
 }
 
 export async function deleteUser(userId: string) {
