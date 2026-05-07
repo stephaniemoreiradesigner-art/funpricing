@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { Trash2, Plus, Pencil, X, Camera, Loader2 } from 'lucide-react'
 import { updateUser, deleteUser, inviteUser } from '@/app/actions/users'
 import { createClient } from '@/lib/supabase/client'
@@ -74,6 +75,7 @@ async function fetchViaCep(cep: string): Promise<{ logradouro: string; bairro: s
 // ── Componente ────────────────────────────────────────────────────────────────
 
 export function UsersClient({ users, currentUserId }: Props) {
+  const router = useRouter()
   const [showInvite, setShowInvite] = useState(false)
   const [inviting, setInviting] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -164,6 +166,7 @@ export function UsersClient({ users, currentUserId }: Props) {
       return
     }
     setEditingUser(null)
+    router.refresh()
   }
 
   async function handleDelete(user: UserRow) {
@@ -171,6 +174,7 @@ export function UsersClient({ users, currentUserId }: Props) {
     setDeletingId(user.id)
     await deleteUser(user.id)
     setDeletingId(null)
+    router.refresh()
   }
 
   async function handleInvite(formData: FormData) {
@@ -178,6 +182,7 @@ export function UsersClient({ users, currentUserId }: Props) {
     await inviteUser(formData)
     setInviting(false)
     setShowInvite(false)
+    router.refresh()
   }
 
   const avatarSrc = previewUrl ?? editForm.avatar_url
