@@ -62,7 +62,7 @@ export function MarkupForm({ config }: Props) {
         <div className="flex items-start justify-between gap-6">
           <div>
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total de descontos</p>
-            <p className={`text-3xl font-bold mt-1 ${valid ? 'text-[#307ca8]' : total === 0 ? 'text-gray-400' : 'text-red-600'}`}>
+            <p className={`text-3xl font-bold mt-1 ${valid ? 'text-[var(--brand)]' : total === 0 ? 'text-gray-400' : 'text-red-600'}`}>
               {total.toFixed(2)}%
             </p>
             <p className="text-xs text-gray-500 mt-1">
@@ -72,7 +72,7 @@ export function MarkupForm({ config }: Props) {
 
           <div className="text-right">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Markup calculado</p>
-            <p className={`text-3xl font-bold mt-1 ${valid ? 'text-[#307ca8]' : 'text-gray-400'}`}>
+            <p className={`text-3xl font-bold mt-1 ${valid ? 'text-[var(--brand)]' : 'text-gray-400'}`}>
               {valid ? markup.toFixed(4) : '—'}
             </p>
             {valid && (
@@ -94,7 +94,7 @@ export function MarkupForm({ config }: Props) {
         <button
           type="submit"
           disabled={!valid || saving}
-          className="bg-[#307ca8] text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-[var(--brand)] text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-[var(--brand-dark)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? 'Salvando...' : 'Salvar configuração'}
         </button>
@@ -140,7 +140,7 @@ function PercentInput({
           max={99.99}
           step={0.01}
           onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-7 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-7 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
         />
         <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
       </div>

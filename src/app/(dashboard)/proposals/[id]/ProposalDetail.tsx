@@ -77,7 +77,7 @@ export function ProposalDetail({ proposal, publicUrl, pdfUrl }: Props) {
               <button
                 onClick={handleMarkSent}
                 disabled={marking}
-                className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 bg-[var(--brand)] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[var(--brand-dark)] transition-colors disabled:opacity-50"
               >
                 <Send size={15} />
                 {marking ? 'Marcando...' : 'Marcar como enviada'}
@@ -133,7 +133,7 @@ export function ProposalDetail({ proposal, publicUrl, pdfUrl }: Props) {
           )}
           <div className="flex justify-between font-bold text-base text-gray-900">
             <span>Total mensal</span>
-            <span className="text-[#307ca8]">{formatCurrency(q?.total_monthly ?? 0)}</span>
+            <span className="text-[var(--brand)]">{formatCurrency(q?.total_monthly ?? 0)}</span>
           </div>
         </div>
 

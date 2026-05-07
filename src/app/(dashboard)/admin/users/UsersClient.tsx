@@ -209,12 +209,12 @@ export function UsersClient({ users, currentUserId }: Props) {
               <div className="flex flex-col items-center gap-2">
                 <div
                   onClick={() => avatarInputRef.current?.click()}
-                  className="relative w-20 h-20 rounded-full overflow-hidden cursor-pointer bg-[#307ca8]/10 flex items-center justify-center group"
+                  className="relative w-20 h-20 rounded-full overflow-hidden cursor-pointer bg-[var(--brand)]/10 flex items-center justify-center group"
                 >
                   {avatarSrc ? (
                     <Image src={avatarSrc} alt="avatar" fill className="object-cover" sizes="80px" />
                   ) : (
-                    <span className="text-[#307ca8] font-bold text-2xl">{avatarLetter}</span>
+                    <span className="text-[var(--brand)] font-bold text-2xl">{avatarLetter}</span>
                   )}
                   <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <Camera size={20} className="text-white" />
@@ -247,7 +247,7 @@ export function UsersClient({ users, currentUserId }: Props) {
                       value={editForm.full_name}
                       onChange={(e) => setEditForm((f) => ({ ...f, full_name: e.target.value }))}
                       placeholder="Nome completo"
-                      className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                      className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
                     />
                   </div>
 
@@ -259,7 +259,7 @@ export function UsersClient({ users, currentUserId }: Props) {
                         value={editForm.cnpj}
                         onChange={(e) => setEditForm((f) => ({ ...f, cnpj: maskCpfCnpj(e.target.value) }))}
                         placeholder="000.000.000-00"
-                        className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                        className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
                       />
                     </div>
                     <div>
@@ -269,7 +269,7 @@ export function UsersClient({ users, currentUserId }: Props) {
                         value={editForm.phone}
                         onChange={(e) => setEditForm((f) => ({ ...f, phone: maskPhone(e.target.value) }))}
                         placeholder="(00) 00000-0000"
-                        className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                        className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -284,7 +284,7 @@ export function UsersClient({ users, currentUserId }: Props) {
                           value={editForm.cep}
                           onChange={(e) => handleCepChange(e.target.value)}
                           placeholder="00000-000"
-                          className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent pr-8"
+                          className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent pr-8"
                         />
                         {cepLoading && (
                           <Loader2 size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 animate-spin" />
@@ -298,7 +298,7 @@ export function UsersClient({ users, currentUserId }: Props) {
                         value={editForm.address}
                         onChange={(e) => setEditForm((f) => ({ ...f, address: e.target.value }))}
                         placeholder="Preenchido automaticamente pelo CEP"
-                        className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                        className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -311,7 +311,7 @@ export function UsersClient({ users, currentUserId }: Props) {
                 <select
                   value={editForm.role}
                   onChange={(e) => setEditForm((f) => ({ ...f, role: e.target.value as UserRole }))}
-                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
                 >
                   <option value="user">Usuário</option>
                   <option value="admin">Admin</option>
@@ -328,7 +328,7 @@ export function UsersClient({ users, currentUserId }: Props) {
               <button
                 onClick={handleSave}
                 disabled={saving || !editForm.full_name.trim()}
-                className="bg-[#307ca8] text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="bg-[var(--brand)] text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-[var(--brand-dark)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {saving && <Loader2 size={14} className="animate-spin" />}
                 {saving ? 'Salvando...' : 'Salvar cadastro'}
@@ -360,7 +360,7 @@ export function UsersClient({ users, currentUserId }: Props) {
                   name="full_name"
                   required
                   placeholder="Nome completo"
-                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8]"
+                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--brand)]"
                 />
               </div>
               <div>
@@ -370,14 +370,14 @@ export function UsersClient({ users, currentUserId }: Props) {
                   name="email"
                   required
                   placeholder="email@exemplo.com"
-                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8]"
+                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--brand)]"
                 />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Perfil</label>
                 <select
                   name="role"
-                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8]"
+                  className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)]"
                 >
                   <option value="user">Usuário</option>
                   <option value="admin">Admin</option>
@@ -391,7 +391,7 @@ export function UsersClient({ users, currentUserId }: Props) {
               <button
                 type="submit"
                 disabled={inviting}
-                className="bg-[#307ca8] text-white text-sm font-medium px-5 py-2 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50"
+                className="bg-[var(--brand)] text-white text-sm font-medium px-5 py-2 rounded-lg hover:bg-[var(--brand-dark)] transition-colors disabled:opacity-50"
               >
                 {inviting ? 'Criando...' : 'Criar usuário'}
               </button>
@@ -414,7 +414,7 @@ export function UsersClient({ users, currentUserId }: Props) {
             </div>
             <button
               onClick={() => setShowInvite(true)}
-              className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#256690] transition-colors"
+              className="flex items-center gap-2 bg-[var(--brand)] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[var(--brand-dark)] transition-colors"
             >
               <Plus size={16} />
               Adicionar
@@ -440,11 +440,11 @@ export function UsersClient({ users, currentUserId }: Props) {
                   <tr key={user.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-[#307ca8]/10 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-[var(--brand)]/10 flex items-center justify-center">
                           {user.avatar_url ? (
                             <Image src={user.avatar_url} alt={user.name} width={32} height={32} className="object-cover w-full h-full" />
                           ) : (
-                            <span className="text-xs font-semibold text-[#307ca8]">{letter}</span>
+                            <span className="text-xs font-semibold text-[var(--brand)]">{letter}</span>
                           )}
                         </div>
                         <span className="text-sm font-medium text-gray-900">
@@ -468,7 +468,7 @@ export function UsersClient({ users, currentUserId }: Props) {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => openEdit(user)}
-                          className="text-gray-400 hover:text-[#307ca8] transition-colors"
+                          className="text-gray-400 hover:text-[var(--brand)] transition-colors"
                           title="Editar usuário"
                         >
                           <Pencil size={15} />

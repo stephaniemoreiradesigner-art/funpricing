@@ -118,7 +118,7 @@ export default async function DashboardPage() {
         {/* Ações rápidas */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp size={17} className="text-[#307ca8]" />
+            <TrendingUp size={17} className="text-[var(--brand)]" />
             <h3 className="font-semibold text-gray-900">Ações rápidas</h3>
           </div>
           <div className="space-y-2">
@@ -133,10 +133,10 @@ export default async function DashboardPage() {
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <FileSignature size={17} className="text-[#307ca8]" />
+              <FileSignature size={17} className="text-[var(--brand)]" />
               <h3 className="font-semibold text-gray-900">Últimas propostas</h3>
             </div>
-            <Link href="/proposals" className="text-xs text-[#307ca8] hover:underline">
+            <Link href="/proposals" className="text-xs text-[var(--brand)] hover:underline">
               Ver todas
             </Link>
           </div>
@@ -144,7 +144,7 @@ export default async function DashboardPage() {
           {!recentProposals || recentProposals.length === 0 ? (
             <p className="text-sm text-gray-400 text-center py-6">
               Nenhuma proposta ainda.{' '}
-              <Link href="/quotes/new" className="text-[#307ca8] underline">
+              <Link href="/quotes/new" className="text-[var(--brand)] underline">
                 Criar orçamento
               </Link>
             </p>
@@ -228,7 +228,7 @@ function QuickLink({ href, label, primary }: { href: string; label: string; prim
       href={href}
       className={`block text-sm font-medium px-4 py-2.5 rounded-lg transition-colors ${
         primary
-          ? 'bg-[#307ca8] text-white hover:bg-[#256690]'
+          ? 'bg-[var(--brand)] text-white hover:bg-[var(--brand-dark)]'
           : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
       }`}
     >

@@ -55,7 +55,7 @@ export default async function ProposalsPage() {
             <p className="text-xs text-gray-400 mt-1">Crie um orçamento e gere uma proposta a partir dele.</p>
             <Link
               href="/quotes/new"
-              className="mt-4 bg-[#307ca8] text-white text-sm font-medium px-5 py-2 rounded-lg hover:bg-[#256690] transition-colors"
+              className="mt-4 bg-[var(--brand)] text-white text-sm font-medium px-5 py-2 rounded-lg hover:bg-[var(--brand-dark)] transition-colors"
             >
               + Novo orçamento
             </Link>

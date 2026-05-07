@@ -52,7 +52,7 @@ export default async function NewProposalPage({ searchParams }: Props) {
         <div className="h-px bg-gray-200 my-2" />
         <div className="flex justify-between text-sm font-bold">
           <span>Total mensal</span>
-          <span className="text-[#307ca8]">{formatCurrency(q.total_monthly)}</span>
+          <span className="text-[var(--brand)]">{formatCurrency(q.total_monthly)}</span>
         </div>
       </div>
 
@@ -68,7 +68,7 @@ export default async function NewProposalPage({ searchParams }: Props) {
               <select
                 name="contract_months"
                 defaultValue="12"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
               >
                 <option value="3">3 meses</option>
                 <option value="6">6 meses</option>
@@ -83,7 +83,7 @@ export default async function NewProposalPage({ searchParams }: Props) {
             <select
               name="setup_payment_method"
               defaultValue="boleto"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
             >
               <option value="boleto">Boleto</option>
               <option value="cartao">Cartão de crédito</option>
@@ -95,7 +95,7 @@ export default async function NewProposalPage({ searchParams }: Props) {
             <select
               name="setup_installments"
               defaultValue="1"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
             >
               {[1, 2, 3, 6, 12].map((n) => (
                 <option key={n} value={n}>{n}x</option>
@@ -107,7 +107,7 @@ export default async function NewProposalPage({ searchParams }: Props) {
         <div className="flex items-center gap-3 pt-2">
           <button
             type="submit"
-            className="bg-[#307ca8] text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-[#256690] transition-colors"
+            className="bg-[var(--brand)] text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-[var(--brand-dark)] transition-colors"
           >
             Gerar proposta
           </button>

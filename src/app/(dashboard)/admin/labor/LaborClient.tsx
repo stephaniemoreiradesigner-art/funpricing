@@ -146,7 +146,7 @@ export function LaborClient({ items }: Props) {
           <button
             onClick={() => fileRef.current?.click()}
             disabled={importing}
-            className="flex items-center gap-1.5 border border-[#307ca8] text-[#307ca8] text-sm font-medium px-3 py-2 rounded-lg hover:bg-[#307ca8]/5 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 border border-[var(--brand)] text-[var(--brand)] text-sm font-medium px-3 py-2 rounded-lg hover:bg-[var(--brand)]/5 transition-colors disabled:opacity-50"
           >
             <Upload size={15} />
             {importing ? 'Importando...' : 'Importar CSV'}
@@ -154,7 +154,7 @@ export function LaborClient({ items }: Props) {
           <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleCSVChange} />
           <button
             onClick={startAdding}
-            className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#256690] transition-colors"
+            className="flex items-center gap-2 bg-[var(--brand)] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[var(--brand-dark)] transition-colors"
           >
             <Plus size={16} />
             Adicionar
@@ -205,7 +205,7 @@ export function LaborClient({ items }: Props) {
                   <div className="flex items-center justify-end gap-3">
                     <button
                       onClick={() => startEditing(item.id)}
-                      className="text-gray-400 hover:text-[#307ca8] transition-colors"
+                      className="text-gray-400 hover:text-[var(--brand)] transition-colors"
                       title="Editar"
                     >
                       <Pencil size={15} />
@@ -269,7 +269,7 @@ function LaborRow({
           defaultValue={item?.title ?? ''}
           placeholder="Ex: Desenvolvedor Front-end"
           required
-          className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+          className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
         />
       </td>
       <td className="px-6 py-2.5">
@@ -277,7 +277,7 @@ function LaborRow({
           form={formId}
           name="level"
           defaultValue={item?.level ?? 'pleno'}
-          className="bg-white text-gray-900 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+          className="bg-white text-gray-900 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
         >
           <option value="junior">Júnior</option>
           <option value="pleno">Pleno</option>
@@ -296,7 +296,7 @@ function LaborRow({
             step={100}
             onChange={(e) => setSalary(parseFloat(e.target.value) || 0)}
             required
-            className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg pl-9 pr-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+            className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg pl-9 pr-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
           />
         </div>
       </td>

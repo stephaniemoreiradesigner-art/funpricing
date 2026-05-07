@@ -170,7 +170,7 @@ export function FilesClient({ initialContract, initialProposal }: Props) {
                       href={current.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 text-gray-400 hover:text-[#307ca8] transition-colors"
+                      className="p-2 text-gray-400 hover:text-[var(--brand)] transition-colors"
                       title="Baixar modelo"
                     >
                       <Download size={16} />
@@ -191,8 +191,8 @@ export function FilesClient({ initialContract, initialProposal }: Props) {
                   disabled={isUploading}
                   className={`flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50 ${
                     current
-                      ? 'border border-[#307ca8] text-[#307ca8] hover:bg-[#307ca8]/5'
-                      : 'bg-[#307ca8] text-white hover:bg-[#256690]'
+                      ? 'border border-[var(--brand)] text-[var(--brand)] hover:bg-[var(--brand)]/5'
+                      : 'bg-[var(--brand)] text-white hover:bg-[var(--brand-dark)]'
                   }`}
                 >
                   {isUploading

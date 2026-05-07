@@ -36,7 +36,7 @@ export default async function ProductsPage() {
         </div>
         <Link
           href="/admin/products/new"
-          className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-[#256690] transition-colors"
+          className="flex items-center gap-2 bg-[var(--brand)] text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-[var(--brand-dark)] transition-colors"
         >
           <Plus size={16} />
           Novo produto

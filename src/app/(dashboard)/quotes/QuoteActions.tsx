@@ -19,7 +19,7 @@ export function QuoteActions({ quoteId, clientId }: Props) {
     <div className="flex items-center justify-end gap-3">
       <Link
         href={`/proposals/new?quote_id=${quoteId}`}
-        className="flex items-center gap-1.5 text-xs text-[#307ca8] font-medium hover:text-[#256690] transition-colors"
+        className="flex items-center gap-1.5 text-xs text-[var(--brand)] font-medium hover:text-[var(--brand-dark)] transition-colors"
         title="Gerar proposta"
       >
         <Send size={14} />

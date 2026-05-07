@@ -95,7 +95,7 @@ export function ClientsImport() {
       <button
         onClick={() => fileRef.current?.click()}
         disabled={importing}
-        className="flex items-center gap-1.5 border border-[#307ca8] text-[#307ca8] text-sm font-medium px-3 py-2 rounded-lg hover:bg-[#307ca8]/5 transition-colors disabled:opacity-50"
+        className="flex items-center gap-1.5 border border-[var(--brand)] text-[var(--brand)] text-sm font-medium px-3 py-2 rounded-lg hover:bg-[var(--brand)]/5 transition-colors disabled:opacity-50"
       >
         <Upload size={15} />
         {importing ? 'Importando...' : 'Importar CSV'}

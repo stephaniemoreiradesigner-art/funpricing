@@ -118,7 +118,7 @@ export function ProductForm({ product, laborOptions, markup }: Props) {
             defaultValue={product?.name ?? ''}
             required
             placeholder="Ex: Gestão de Redes Sociais"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
           />
         </div>
 
@@ -129,7 +129,7 @@ export function ProductForm({ product, laborOptions, markup }: Props) {
             defaultValue={product?.description ?? ''}
             placeholder="Descreva o que está incluso neste produto..."
             rows={3}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent resize-none"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent resize-none"
           />
         </div>
 
@@ -139,7 +139,7 @@ export function ProductForm({ product, laborOptions, markup }: Props) {
             id="is_active"
             name="is_active_check"
             defaultChecked={product?.is_active ?? true}
-            className="w-4 h-4 accent-[#307ca8]"
+            className="w-4 h-4 accent-[var(--brand)]"
           />
           <label htmlFor="is_active" className="text-sm font-medium text-gray-800">
             Produto ativo (disponível para orçamentos)
@@ -158,7 +158,7 @@ export function ProductForm({ product, laborOptions, markup }: Props) {
             type="button"
             onClick={addLabor}
             disabled={laborOptions.length === 0}
-            className="flex items-center gap-1.5 text-sm text-[#307ca8] font-medium hover:text-[#256690] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-1.5 text-sm text-[var(--brand)] font-medium hover:text-[var(--brand-dark)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Plus size={15} />
             Adicionar
@@ -186,7 +186,7 @@ export function ProductForm({ product, laborOptions, markup }: Props) {
                 <select
                   value={item.labor_id}
                   onChange={(e) => updateLaborField(item.tempId, 'labor_id', e.target.value)}
-                  className="flex-1 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                  className="flex-1 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
                 >
                   {laborOptions.map((l) => (
                     <option key={l.id} value={l.id}>
@@ -202,7 +202,7 @@ export function ProductForm({ product, laborOptions, markup }: Props) {
                     min={0}
                     step={1}
                     onChange={(e) => updateLaborField(item.tempId, 'hours', parseFloat(e.target.value) || 0)}
-                    className="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 pr-6 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 pr-6 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
                   />
                   <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">h</span>
                 </div>
@@ -234,7 +234,7 @@ export function ProductForm({ product, laborOptions, markup }: Props) {
           <button
             type="button"
             onClick={addTool}
-            className="flex items-center gap-1.5 text-sm text-[#307ca8] font-medium hover:text-[#256690] transition-colors"
+            className="flex items-center gap-1.5 text-sm text-[var(--brand)] font-medium hover:text-[var(--brand-dark)] transition-colors"
           >
             <Plus size={15} />
             Adicionar
@@ -255,7 +255,7 @@ export function ProductForm({ product, laborOptions, markup }: Props) {
                 value={item.name}
                 onChange={(e) => updateToolField(item.tempId, 'name', e.target.value)}
                 placeholder="Ex: Adobe Creative Cloud"
-                className="flex-1 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                className="flex-1 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
               />
               <div className="relative w-36">
                 <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm">R$</span>
@@ -265,7 +265,7 @@ export function ProductForm({ product, laborOptions, markup }: Props) {
                   min={0}
                   step={0.01}
                   onChange={(e) => updateToolField(item.tempId, 'monthly_cost', parseFloat(e.target.value) || 0)}
-                  className="w-full border border-gray-300 rounded-lg pl-8 pr-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg pl-8 pr-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
                 />
               </div>
               <button
@@ -299,7 +299,7 @@ export function ProductForm({ product, laborOptions, markup }: Props) {
           <div className="h-px bg-blue-200 my-2" />
           <div className="flex justify-between font-bold text-gray-900 text-base">
             <span>Preço mensal</span>
-            <span className="text-[#307ca8]">{formatCurrency(totalPrice)}</span>
+            <span className="text-[var(--brand)]">{formatCurrency(totalPrice)}</span>
           </div>
         </div>
         {!markup && (
@@ -314,7 +314,7 @@ export function ProductForm({ product, laborOptions, markup }: Props) {
         <button
           type="submit"
           disabled={saving}
-          className="bg-[#307ca8] text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-[var(--brand)] text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-[var(--brand-dark)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? 'Salvando...' : product ? 'Salvar alterações' : 'Criar produto'}
         </button>

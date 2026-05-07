@@ -31,14 +31,13 @@ interface Props {
   monthly: MonthlyBar[]
   proposalsByStatus: StatusSlice[]
   contractsByStatus: StatusSlice[]
+  brand: string
 }
 
 const BRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
-const BRAND = '#307ca8'
-
-export function StatsCharts({ monthly, proposalsByStatus, contractsByStatus }: Props) {
+export function StatsCharts({ monthly, proposalsByStatus, contractsByStatus, brand }: Props) {
   return (
     <div className="space-y-6">
       {/* Atividade mensal */}
@@ -54,7 +53,7 @@ export function StatsCharts({ monthly, proposalsByStatus, contractsByStatus }: P
               contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 12 }}
               cursor={{ fill: '#f9fafb' }}
             />
-            <Bar dataKey="orcamentos" name="Orçamentos" fill={BRAND} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="orcamentos" name="Orçamentos" fill={brand} radius={[4, 4, 0, 0]} />
             <Bar dataKey="propostas" name="Propostas" fill="#93c5fd" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>

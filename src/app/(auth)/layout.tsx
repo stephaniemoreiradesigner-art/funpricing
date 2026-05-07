@@ -18,7 +18,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
 
   return (
     <>
-      <style>{`:root { --brand: ${brandColor}; --brand-dark: ${brandColor}; }`}</style>
+      <style>{`:root { --brand: ${brandColor}; --brand-dark: color-mix(in srgb, ${brandColor} 82%, black); }`}</style>
       {children}
     </>
   )

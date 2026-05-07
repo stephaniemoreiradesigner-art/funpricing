@@ -41,7 +41,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <SidebarProvider>
-      <style>{`:root { --brand: ${brandColor}; --brand-dark: ${brandColor}; }`}</style>
+      <style>{`:root { --brand: ${brandColor}; --brand-dark: color-mix(in srgb, ${brandColor} 82%, black); }`}</style>
       <div className="min-h-screen bg-gray-50">
         <Sidebar role={role} userName={name} avatarUrl={avatarUrl} logoUrl={logoUrl} />
         <div className="md:ml-60 flex flex-col min-h-screen">

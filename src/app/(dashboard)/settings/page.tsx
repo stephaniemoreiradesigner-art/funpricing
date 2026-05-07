@@ -62,8 +62,8 @@ export default async function SettingsPage() {
   return (
     <div className="max-w-3xl space-y-8">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[#307ca8]/10 flex items-center justify-center">
-          <Settings size={20} className="text-[#307ca8]" />
+        <div className="w-10 h-10 rounded-xl bg-[var(--brand)]/10 flex items-center justify-center">
+          <Settings size={20} className="text-[var(--brand)]" />
         </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Configurações</h2>

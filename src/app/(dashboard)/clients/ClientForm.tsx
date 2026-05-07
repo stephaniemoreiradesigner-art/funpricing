@@ -66,7 +66,7 @@ export function ClientForm({ client }: Props) {
             <select
               name="state"
               defaultValue={client?.state ?? ''}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
             >
               <option value="">—</option>
               {BRAZIL_STATES.map((s) => (
@@ -97,7 +97,7 @@ export function ClientForm({ client }: Props) {
         <button
           type="submit"
           disabled={saving}
-          className="bg-[#307ca8] text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-[var(--brand)] text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-[var(--brand-dark)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? 'Salvando...' : client ? 'Salvar alterações' : 'Cadastrar cliente'}
         </button>
@@ -137,7 +137,7 @@ function Field({
         defaultValue={defaultValue}
         placeholder={placeholder}
         required={required}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
       />
     </div>
   )

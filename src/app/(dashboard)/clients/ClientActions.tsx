@@ -15,7 +15,7 @@ export function ClientActions({ client }: { client: Client }) {
     <div className="flex items-center justify-end gap-3">
       <Link
         href={`/clients/${client.id}`}
-        className="text-gray-400 hover:text-[#307ca8] transition-colors"
+        className="text-gray-400 hover:text-[var(--brand)] transition-colors"
         title="Editar"
       >
         <Pencil size={15} />

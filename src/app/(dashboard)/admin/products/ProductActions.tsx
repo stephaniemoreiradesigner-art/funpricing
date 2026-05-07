@@ -19,7 +19,7 @@ export function ProductActions({ product }: Props) {
     <div className="flex items-center justify-end gap-3">
       <Link
         href={`/admin/products/${product.id}`}
-        className="text-gray-400 hover:text-[#307ca8] transition-colors"
+        className="text-gray-400 hover:text-[var(--brand)] transition-colors"
         title="Editar"
       >
         <Pencil size={15} />

@@ -55,7 +55,7 @@ export function QuoteBuilder({ clients, products, markup }: Props) {
           <select
             name="client_id"
             required
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
           >
             <option value="">Selecione o cliente...</option>
             {clients.map((c) => (
@@ -91,7 +91,7 @@ export function QuoteBuilder({ clients, products, markup }: Props) {
                     key={product.id}
                     className={`flex items-center gap-4 p-4 rounded-lg border cursor-pointer transition-all ${
                       selected
-                        ? 'border-[#307ca8] bg-blue-50'
+                        ? 'border-[var(--brand)] bg-blue-50'
                         : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
@@ -99,7 +99,7 @@ export function QuoteBuilder({ clients, products, markup }: Props) {
                       type="checkbox"
                       checked={selected}
                       onChange={() => toggleProduct(product.id)}
-                      className="w-4 h-4 accent-[#307ca8]"
+                      className="w-4 h-4 accent-[var(--brand)]"
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900">{product.name}</p>
@@ -124,7 +124,7 @@ export function QuoteBuilder({ clients, products, markup }: Props) {
             name="notes"
             placeholder="Condições especiais, escopo adicional, prazos..."
             rows={3}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent resize-none"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent resize-none"
           />
         </div>
       </div>
@@ -174,7 +174,7 @@ export function QuoteBuilder({ clients, products, markup }: Props) {
                 max={100}
                 step={0.5}
                 onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-7 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-7 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
               />
               <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
             </div>
@@ -195,7 +195,7 @@ export function QuoteBuilder({ clients, products, markup }: Props) {
             <div className="h-px bg-gray-100" />
             <div className="flex justify-between font-bold text-base text-gray-900">
               <span>Total/mês</span>
-              <span className="text-[#307ca8]">{formatCurrency(total)}</span>
+              <span className="text-[var(--brand)]">{formatCurrency(total)}</span>
             </div>
           </div>
 
@@ -208,7 +208,7 @@ export function QuoteBuilder({ clients, products, markup }: Props) {
           <button
             type="submit"
             disabled={saving || selectedIds.length === 0}
-            className="w-full bg-[#307ca8] text-white text-sm font-medium py-2.5 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[var(--brand)] text-white text-sm font-medium py-2.5 rounded-lg hover:bg-[var(--brand-dark)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? 'Salvando...' : 'Salvar orçamento'}
           </button>

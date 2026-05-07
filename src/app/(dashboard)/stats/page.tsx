@@ -1,9 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { formatCurrency } from '@/lib/calculations'
 import { StatsCharts } from './StatsCharts'
 
 export default async function StatsPage() {
   const supabase = await createClient()
+  const admin = createAdminClient()
+  const { data: customization } = await admin.from('customization').select('brand_color').maybeSingle()
+  const brand = customization?.brand_color ?? '#307ca8'
 
   // Últimos 6 meses
   const months: { label: string; start: string; end: string }[] = []
@@ -60,7 +64,7 @@ export default async function StatsPage() {
 
   const proposalsByStatus = [
     { name: 'Rascunho', value: draft ?? 0, color: '#9ca3af' },
-    { name: 'Enviada', value: sent ?? 0, color: '#307ca8' },
+    { name: 'Enviada', value: sent ?? 0, color: brand },
     { name: 'Visualizada', value: viewed ?? 0, color: '#059669' },
   ]
 
@@ -77,7 +81,7 @@ export default async function StatsPage() {
 
   const contractsByStatus = [
     { name: 'Pendente', value: pending ?? 0, color: '#f59e0b' },
-    { name: 'Assinado', value: signed ?? 0, color: '#307ca8' },
+    { name: 'Assinado', value: signed ?? 0, color: brand },
     { name: 'Concluído', value: completed ?? 0, color: '#059669' },
   ]
 
@@ -100,7 +104,7 @@ export default async function StatsPage() {
       </div>
 
       {/* MRR em destaque */}
-      <div className="bg-[#307ca8] rounded-xl p-6 text-white">
+      <div className="bg-[var(--brand)] rounded-xl p-6 text-white">
         <p className="text-sm font-medium text-blue-100">MRR — Receita Recorrente Mensal</p>
         <p className="text-4xl font-bold mt-1">{formatCurrency(mrr)}</p>
         <p className="text-sm text-blue-200 mt-1">
@@ -112,6 +116,7 @@ export default async function StatsPage() {
         monthly={monthlyData}
         proposalsByStatus={proposalsByStatus}
         contractsByStatus={contractsByStatus}
+        brand={brand}
       />
     </div>
   )

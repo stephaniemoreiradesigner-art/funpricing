@@ -29,7 +29,7 @@ export default async function ClientsPage() {
           <ClientsImport />
           <Link
             href="/clients/new"
-            className="flex items-center gap-2 bg-[#307ca8] text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-[#256690] transition-colors"
+            className="flex items-center gap-2 bg-[var(--brand)] text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-[var(--brand-dark)] transition-colors"
           >
             <Plus size={16} />
             <span className="hidden sm:inline">Novo cliente</span>
@@ -46,7 +46,7 @@ export default async function ClientsPage() {
             <p className="text-xs text-gray-400 mt-1">Comece adicionando seu primeiro cliente.</p>
             <Link
               href="/clients/new"
-              className="mt-4 bg-[#307ca8] text-white text-sm font-medium px-5 py-2 rounded-lg hover:bg-[#256690] transition-colors"
+              className="mt-4 bg-[var(--brand)] text-white text-sm font-medium px-5 py-2 rounded-lg hover:bg-[var(--brand-dark)] transition-colors"
             >
               + Novo cliente
             </Link>

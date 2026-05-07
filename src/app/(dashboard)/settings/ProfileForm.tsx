@@ -32,7 +32,7 @@ export function ProfileForm({ profile }: Props) {
             name="full_name"
             defaultValue={profile.full_name ?? ''}
             required
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
           />
         </div>
 
@@ -43,7 +43,7 @@ export function ProfileForm({ profile }: Props) {
             name="cnpj"
             defaultValue={profile.cnpj ?? ''}
             placeholder="00.000.000/0000-00"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
           />
         </div>
 
@@ -54,7 +54,7 @@ export function ProfileForm({ profile }: Props) {
             name="phone"
             defaultValue={profile.phone ?? ''}
             placeholder="(00) 00000-0000"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
           />
         </div>
 
@@ -65,7 +65,7 @@ export function ProfileForm({ profile }: Props) {
             name="address"
             defaultValue={profile.address ?? ''}
             placeholder="Rua, número, complemento, cidade - UF"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#307ca8] focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
           />
         </div>
       </div>
@@ -74,7 +74,7 @@ export function ProfileForm({ profile }: Props) {
         <button
           type="submit"
           disabled={saving}
-          className="bg-[#307ca8] text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-[#256690] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-[var(--brand)] text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-[var(--brand-dark)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? 'Salvando...' : 'Salvar cadastro'}
         </button>

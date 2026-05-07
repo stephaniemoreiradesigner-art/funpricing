@@ -18,7 +18,7 @@ export function ProposalActions({ proposalId }: Props) {
     <div className="flex items-center justify-end gap-3">
       <Link
         href={`/proposals/${proposalId}`}
-        className="text-gray-400 hover:text-[#307ca8] transition-colors"
+        className="text-gray-400 hover:text-[var(--brand)] transition-colors"
         title="Ver proposta"
       >
         <Eye size={15} />
